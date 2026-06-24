@@ -211,7 +211,7 @@ function FinanceSummaryCard({
 
 // ─── Collaborator row ─────────────────────────────────────────────────────────
 function CollabRow({ collab, rank, maxHours, onClick }: {
-  collab: any; rank: number; maxHours: number; onClick: () => void
+  collab: import("@/hooks/useCollaborators").Collaborator; rank: number; maxHours: number; onClick: () => void
 }) {
   const pct = maxHours > 0 ? (collab._monthHours / maxHours) * 100 : 0
   const rankColors = [
@@ -271,7 +271,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
 
     const withMonthData = collaborators.map(c => {
       let monthHours = 0, monthCost = 0
-      c.entries.forEach((e: any) => {
+      c.entries.forEach((e) => {
         if ((e.date || "").startsWith(monthKey)) {
           const h = e.totalHoras || 0
           monthHours += h
@@ -298,7 +298,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
       const k = `${y}-${String(m + 1).padStart(2, "0")}`
       let h = 0, cost = 0
       collaborators.forEach(c => {
-        c.entries.forEach((e: any) => {
+        c.entries.forEach((e) => {
           if ((e.date || "").startsWith(k)) {
             const eh = e.totalHoras || 0
             h += eh; cost += eh * resolveEntryTaxa(e, c.currentRate)
@@ -322,12 +322,12 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
     collaborators.forEach(c => {
       const rate = c.currentRate || 0
       const payments = [...(c.payments || [])].sort(
-        (a: any, b: any) => new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
+        (a, b) => new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
       )
 
       // Agrupa custo por mês
       const monthMap = new Map<string, number>()
-      c.entries.forEach((e: any) => {
+      c.entries.forEach((e) => {
         const p = (e.date || "").slice(0, 7)
         if (!p) return
         monthMap.set(p, (monthMap.get(p) || 0) + (e.totalHoras || 0) * resolveEntryTaxa(e, rate))
@@ -581,7 +581,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
               </Button>
             </div>
             <div className="p-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-2">
-              {stats.withMonthData.map((c: any) => {
+              {stats.withMonthData.map((c) => {
                 const initials = c.name.split(" ").slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()
                 const isActive = c._monthHours > 0
                 return (

@@ -6,12 +6,20 @@ import { useWorkTracker } from "@/lib/work-tracker-context"
 import { useAuth } from "@/lib/AuthProvider"
 import { useRouter } from "next/navigation"
 
-import { AdminDashboardView }     from "@/components/admin/admin-dashboard-view"
-import { AdminCollaboratorsView } from "@/components/admin/admin-collaborators-view"
-import { AdminFinanceView }       from "@/components/admin/admin-finance-view"
-import { AdminObrasView }         from "@/components/admin/admin-obras-view"
-import { AdminReportsView }       from "@/components/admin/admin-reports-view"
-import { AdminSettingsView }      from "@/components/admin/admin-settings-view"
+import dynamic from "next/dynamic"
+
+const loading = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <Spinner className="h-7 w-7 text-primary" />
+  </div>
+)
+
+const AdminDashboardView     = dynamic(() => import("@/components/admin/admin-dashboard-view").then(m => ({ default: m.AdminDashboardView })), { loading })
+const AdminCollaboratorsView = dynamic(() => import("@/components/admin/admin-collaborators-view").then(m => ({ default: m.AdminCollaboratorsView })), { loading })
+const AdminFinanceView       = dynamic(() => import("@/components/admin/admin-finance-view").then(m => ({ default: m.AdminFinanceView })), { loading })
+const AdminObrasView         = dynamic(() => import("@/components/admin/admin-obras-view").then(m => ({ default: m.AdminObrasView })), { loading })
+const AdminReportsView       = dynamic(() => import("@/components/admin/admin-reports-view").then(m => ({ default: m.AdminReportsView })), { loading })
+const AdminSettingsView      = dynamic(() => import("@/components/admin/admin-settings-view").then(m => ({ default: m.AdminSettingsView })), { loading })
 import { AdminBottomNav, type AdminTabType } from "@/components/admin/admin-bottom-nav"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent } from "@/components/ui/card"

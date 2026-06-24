@@ -34,10 +34,10 @@ export interface Collaborator {
   totalHoursThisMonth: number
   totalHoursAllTime: number
   role: string
-  createdAt: any
+  createdAt: string | null
   migrated?: boolean
   ativo: boolean
-  entries: any[]
+  entries: import("@/lib/types").DayEntry[]
   payments: Array<{
     id: string
     date: string
@@ -84,14 +84,9 @@ export function useCollaborators(): UseCollaboratorsReturn {
     setError(null)
 
     try {
-      console.log("🔄 Iniciando busca de colaboradores...")
-
       const usersRef = collection(db, "users")
       const workersQuery = query(usersRef, where("role", "==", "worker"))
       const usersSnapshot = await getDocs(workersQuery)
-
-      console.log(`📊 Encontrados ${usersSnapshot.size} colaboradores no Firebase`)
-
       const collabsData: Collaborator[] = []
 
       for (const userDoc of usersSnapshot.docs) {
@@ -169,9 +164,7 @@ export function useCollaborators(): UseCollaboratorsReturn {
       })
 
       setCollaborators(collabsData)
-      console.log(`✅ Total processados: ${collabsData.length} colaboradores`)
     } catch (err) {
-      console.error("❌ Erro ao buscar colaboradores:", err)
       setError("Erro ao carregar colaboradores. Verifica a consola para mais detalhes.")
     } finally {
       setLoading(false)

@@ -1,14 +1,16 @@
 //app/page.tsx
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
 
 import { CalendarView } from "@/components/calendar-view"
-import { DayEntryForm } from "@/components/day-entry-form"
-import { SettingsView } from "@/components/settings-view"
-import { FinanceiroView } from "@/components/financeiro-view"
 import { BottomNav, type TabType } from "@/components/bottom-nav"
+import dynamic from "next/dynamic"
+
+const DayEntryForm   = dynamic(() => import("@/components/day-entry-form").then(m => ({ default: m.DayEntryForm })))
+const SettingsView   = dynamic(() => import("@/components/settings-view").then(m => ({ default: m.SettingsView })))
+const FinanceiroView = dynamic(() => import("@/components/financeiro-view").then(m => ({ default: m.FinanceiroView })))
 
 function LoadingScreen() {
   return (
