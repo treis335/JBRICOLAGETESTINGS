@@ -37,8 +37,8 @@ interface CollaboratorRateManagerProps {
   onRateUpdated: (newRate: number, newHistory: RateHistoryEntry[]) => void
 }
 
-const formatCurrency = (v: number) =>
-  
+const formatCurrency = (v: number) => fmt(v)
+
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("pt-PT", {
