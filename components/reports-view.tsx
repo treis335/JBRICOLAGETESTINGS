@@ -539,12 +539,19 @@ export function ReportsView() {
         <div className="p-4 md:p-8 space-y-4 pb-32 md:pb-20 max-w-4xl mx-auto">
 
           {!hasEntries && (
-            <div className="flex flex-col items-center justify-center py-32 text-center">
-              <div className="w-20 h-20 rounded-3xl bg-muted flex items-center justify-center mb-5 shadow-inner">
-                <CalendarDays className="h-10 w-10 text-muted-foreground/40" />
+            <div className="flex flex-col items-center justify-center py-32 text-center animate-fade-in">
+              <div className="relative mb-5">
+                <div className="w-20 h-20 rounded-3xl bg-muted/60 border border-border/60 flex items-center justify-center shadow-sm">
+                  <CalendarDays className="h-9 w-9 text-muted-foreground/40" />
+                </div>
+                <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-xl bg-background border border-border flex items-center justify-center shadow-sm">
+                  <span className="text-base">📋</span>
+                </div>
               </div>
               <p className="font-bold text-lg text-foreground">Sem registos</p>
-              <p className="text-sm text-muted-foreground mt-1.5">Nenhum registo encontrado neste período</p>
+              <p className="text-sm text-muted-foreground mt-1.5 max-w-[200px] leading-relaxed">
+                Nenhuma entrada encontrada para este período
+              </p>
             </div>
           )}
 
@@ -570,31 +577,31 @@ export function ReportsView() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                <Card className="border border-border/60 bg-card shadow-sm">
+                <Card className="border border-border/60 bg-card shadow-sm rounded-2xl hover:shadow-md transition-all duration-200">
                   <CardContent className="p-4 md:p-5">
                     <div className="flex items-center gap-2 text-muted-foreground mb-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-xl bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center">
                         <Clock className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                       </div>
-                      <span className="text-xs font-semibold uppercase tracking-wide">Normais</span>
+                      <span className="text-xs font-bold uppercase tracking-wide">Normais</span>
                     </div>
-                    <p className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400">{totals.totalNormais}h</p>
+                    <p className="text-3xl md:text-4xl font-black text-blue-600 dark:text-blue-400">{totals.totalNormais}h</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-border/60 bg-card shadow-sm">
+                <Card className="border border-border/60 bg-card shadow-sm rounded-2xl hover:shadow-md transition-all duration-200">
                   <CardContent className="p-4 md:p-5">
                     <div className="flex items-center gap-2 text-muted-foreground mb-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-xl bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
                         <TrendingUp className="h-3.5 w-3.5 text-red-500 dark:text-red-400" />
                       </div>
-                      <span className="text-xs font-semibold uppercase tracking-wide">Extras</span>
+                      <span className="text-xs font-bold uppercase tracking-wide">Extras</span>
                     </div>
-                    <p className="text-3xl md:text-4xl font-bold text-red-500 dark:text-red-400">{totals.totalExtras}h</p>
+                    <p className="text-3xl md:text-4xl font-black text-red-500 dark:text-red-400">{totals.totalExtras}h</p>
                   </CardContent>
                 </Card>
 
-                <Card className="col-span-2 md:col-span-1 border border-border/60 bg-card shadow-sm">
+                <Card className="col-span-2 md:col-span-1 border border-border/60 bg-card shadow-sm rounded-2xl hover:shadow-md transition-all duration-200">
                   <CardContent className="p-4 md:p-5">
                     <div className="flex items-center gap-2 text-muted-foreground mb-2.5">
                       <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center">
