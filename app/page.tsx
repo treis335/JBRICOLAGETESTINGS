@@ -55,30 +55,22 @@ function LoadingScreen() {
   )
 }
 
-// Animated tab wrapper
+// Animated tab wrapper — componentes mantêm-se montados (sem re-fetch ao trocar tab)
 function TabPane({ active, children }: { active: boolean; children: React.ReactNode }) {
-  const [rendered, setRendered] = useState(active)
-  const [visible, setVisible] = useState(active)
+  const [everActive, setEverActive] = useState(active)
 
   useEffect(() => {
-    if (active) {
-      setRendered(true)
-      // Small delay so the CSS animation triggers after mount
-      requestAnimationFrame(() => setVisible(true))
-    } else {
-      setVisible(false)
-      const t = setTimeout(() => setRendered(false), 250)
-      return () => clearTimeout(t)
-    }
-  }, [active])
+    if (active && !everActive) setEverActive(true)
+  }, [active, everActive])
 
-  if (!rendered) return null
+  // Não monta até ser visitado pela primeira vez
+  if (!everActive) return null
 
   return (
     <div
       style={{
-        animation: visible ? "fade-in-up 0.3s cubic-bezier(0.16,1,0.3,1) both" : "none",
-        opacity: visible ? undefined : 0,
+        display: active ? undefined : "none",
+        animation: active ? "fade-in-up 0.25s cubic-bezier(0.16,1,0.3,1) both" : "none",
       }}
     >
       {children}
