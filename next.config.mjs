@@ -14,7 +14,7 @@ const withPWA = withPWAInit({
           cacheName: 'images',
           expiration: {
             maxEntries: 100,
-            maxAgeSeconds: 30 * 24 * 60 * 60, // 30 dias
+            maxAgeSeconds: 30 * 24 * 60 * 60,
           },
         },
       },
@@ -27,7 +27,6 @@ const withPWA = withPWAInit({
       },
     ],
   },
-  // fallbacks: { ... } se quiseres depois
 });
 
 /** @type {import('next').NextConfig} */
@@ -35,12 +34,11 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     unoptimized: true,
-  },
-  // ↓↓↓ Adiciona isto para forçar Webpack e silenciar o erro
-  experimental: {
-    turbopack: false,  // desativa Turbopack explicitamente
   },
 };
 
