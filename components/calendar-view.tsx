@@ -393,11 +393,12 @@ export function CalendarView({ onSelectDate, onAddToday }: CalendarViewProps) {
   }, [selectedDate])
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full bg-background animate-fade-in">
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-5 py-4 border-b bg-card shadow-sm">
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" onClick={() => handleMonthChange("prev")}>
+      <div className="flex items-center justify-between px-5 py-4 border-b bg-card/80 backdrop-blur-xl shadow-sm animate-fade-in"
+        style={{ WebkitBackdropFilter: "blur(20px)" }}>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl press-effect" onClick={() => handleMonthChange("prev")}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <div className="text-center">
@@ -406,7 +407,7 @@ export function CalendarView({ onSelectDate, onAddToday }: CalendarViewProps) {
             <p className="text-[10px] text-muted-foreground/60 mt-0.5 uppercase tracking-widest">mês atual</p>
           )}
         </div>
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" onClick={() => handleMonthChange("next")}>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl press-effect" onClick={() => handleMonthChange("next")}>
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
@@ -549,10 +550,10 @@ export function CalendarView({ onSelectDate, onAddToday }: CalendarViewProps) {
       <Button
         onClick={onAddToday}
         size="lg"
-        className="fixed bottom-24 right-4 h-14 px-5 rounded-full shadow-lg shadow-emerald-600/25 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white z-40 gap-2 transition-all duration-150"
+        className="fixed bottom-24 right-4 h-14 px-5 rounded-2xl shadow-lg shadow-emerald-600/30 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white z-40 gap-2 transition-all duration-200 press-effect hover:shadow-emerald-600/40 hover:shadow-xl hover:-translate-y-0.5"
       >
         <Plus className="h-5 w-5" />
-        <span className="font-semibold tracking-tight">Hoje</span>
+        <span className="font-bold tracking-tight">Hoje</span>
       </Button>
 
       {/* ── Entry Detail Dialog ── */}
@@ -603,9 +604,17 @@ function StatCell({ value, label, color }: {
     green:   "text-emerald-600 dark:text-emerald-400",
     amber:   "text-amber-500 dark:text-amber-400",
   }
+  const bgColors = {
+    default: "",
+    blue:    "",
+    green:   "",
+    amber:   "",
+  }
   return (
-    <div className="flex flex-col items-center py-3.5 gap-1">
-      <span className={cn("text-xl font-bold leading-none tabular-nums", colors[color])}>{value}</span>
+    <div className="flex flex-col items-center py-3.5 gap-1 group transition-colors duration-200 hover:bg-muted/30 cursor-default select-none">
+      <span className={cn("text-xl font-bold leading-none tabular-nums transition-transform duration-200 group-hover:scale-110", colors[color])}>
+        {value}
+      </span>
       <span className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-semibold">{label}</span>
     </div>
   )
