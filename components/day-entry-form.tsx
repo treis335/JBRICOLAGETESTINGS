@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { formatLocalDate } from "@/lib/date-utils"
 import {
+import { fmt } from "@/lib/utils"
   Sheet,
   SheetContent,
   SheetHeader,
@@ -14,12 +15,11 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import {
   Plus, Minus, X, Trash2, Users, Check,
-  Clock, Hammer, Search, HardHat, MapPin,
-  PenLine, AlertTriangle, Info, Maximize2,
+  Clock, Hammer, Search, HardHat, MapPin, AlertTriangle, Info, Maximize2,
   ChevronRight, ZoomIn,
 } from "lucide-react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
-import { type DayEntry, calculateHours } from "@/lib/types"
+import {  calculateHours } from "@/lib/types"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,7 +39,6 @@ import {
   getGoogleMapsUrl,
   getWazeUrl,
   formatMorada,
-  type Obra,
 } from "@/lib/obras-service"
 
 import { useActiveCollaborators } from "@/hooks/useActiveCollaborators"
@@ -850,7 +849,7 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                   {date && <SheetTitle className="text-2xl font-black leading-tight text-foreground capitalize">{date.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}</SheetTitle>}
                   {totalHoras > 0 && (
                     <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
-                      ≈ {new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(totalHoras * data.settings.taxaHoraria)}
+                      ≈ {fmt(totalHoras * data.settings.taxaHoraria)}
                     </p>
                   )}
                 </div>

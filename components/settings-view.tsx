@@ -13,7 +13,7 @@ import {
   DatabaseBackup, ChevronRight,
   Phone, CreditCard, Camera, Building2,
   Hash, Loader2, Zap, ZapOff, Settings2, ImageIcon,
-  Eye, EyeOff, UserCircle2, Shield, Sparkles,
+  Eye, EyeOff, UserCircle2, Shield,
 } from "lucide-react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
 import { useAuth } from "@/lib/AuthProvider"

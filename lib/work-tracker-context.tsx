@@ -86,7 +86,6 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
           const migrated = userData?.migrated ?? false
 
           if (!migrated) {
-            console.log(`🔄 Migração inicial para user ${user.uid}`)
             const userSpecificKey = `trabalhoDiario_${user.uid}`
             const legacyKey = "trabalhoDiario"
             let localRaw = localStorage.getItem(userSpecificKey)
@@ -95,7 +94,6 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
             const localData: AppData | null = localRaw ? JSON.parse(localRaw) : null
 
             if (localData) {
-              console.log(`✅ Dados encontrados em ${migratedFrom}, migrando...`)
               finalData = localData
               const cleanData = removeUndefined(finalData)
               await setDoc(userDocRef, {
@@ -106,11 +104,9 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
               }, { merge: true })
               localStorage.removeItem(userSpecificKey)
               if (migratedFrom === legacyKey) {
-                console.log("🗑️ Removendo chave legacy do localStorage")
                 localStorage.removeItem(legacyKey)
               }
             } else {
-              console.log("ℹ️ Sem dados para migrar, criando documento vazio")
               await setDoc(userDocRef, {
                 workData: defaultAppData,
                 migrated: true,
@@ -118,7 +114,6 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
               }, { merge: true })
             }
           } else if (workData) {
-            console.log(`✅ Carregando dados do Firebase para user ${user.uid}`)
             finalData = {
               entries: Array.isArray(workData.entries) ? workData.entries : [],
               payments: Array.isArray(workData.payments) ? workData.payments : [],
@@ -127,10 +122,8 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
                 : defaultAppData.settings,
             }
           } else {
-            console.log("⚠️ User migrado mas sem workData, usando defaults")
           }
         } else {
-          console.log(`🆕 Criando novo documento para user ${user.uid}`)
           await setDoc(userDocRef, {
             workData: defaultAppData,
             migrated: true,
@@ -139,7 +132,6 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
         }
 
         setData(finalData)
-        console.log(`✅ Dados carregados:`, {
           entries: finalData.entries.length,
           payments: finalData.payments.length,
           userId: user.uid,
@@ -175,7 +167,6 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
       try {
         const cleanData = removeUndefined(data)
         await setDoc(doc(db, "users", user.uid), { workData: cleanData }, { merge: true })
-        console.log(`💾 Dados salvos no Firebase para user ${user.uid}`)
       } catch (err) {
         console.error("❌ Erro ao salvar dados Firebase:", err)
       }
@@ -259,7 +250,6 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
       if (user) {
         const cleanData = removeUndefined(appData)
         setDoc(doc(db, "users", user.uid), { workData: cleanData }, { merge: true })
-          .then(() => console.log("✅ Import concluído"))
           .catch((err) => console.error("❌ Erro ao importar:", err))
       }
     } catch (err) {

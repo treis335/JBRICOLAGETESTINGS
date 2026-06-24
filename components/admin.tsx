@@ -27,7 +27,6 @@ import {
   Award,
   Calendar,
   DollarSign,
-  MapPin,
   BarChart3,
   Activity,
   Target,

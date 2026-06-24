@@ -10,7 +10,6 @@ import {
   uploadFotoObra, geocodeMorada, formatMorada,
   getGoogleMapsUrl, getWazeUrl,
   ESTADO_LABELS, ESTADO_COLORS,
-  type Obra, type ObraEstado, type ObraLocalizacao,
 } from "@/lib/obras-service"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"

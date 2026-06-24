@@ -8,7 +8,7 @@ import {
   Bell, Lock, Building2, HardDrive, Download, AlertTriangle,
 } from "lucide-react"
 import { useAuth } from "@/lib/AuthProvider"
-import { Button } from "@/components/ui/button"
+import  from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FirebaseExportButton } from "@/components/admin/FirebaseExportButton"
 import { cn } from "@/lib/utils"

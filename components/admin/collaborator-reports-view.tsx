@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
-import { Button } from "@/components/ui/button"
+import  from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
   ChevronLeft, ChevronRight, FileDown, Calendar,
@@ -27,7 +27,7 @@ type Period = "daily" | "weekly" | "monthly"
 
 
 const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(value)
+  fmt(value)
 
 const formatDateWithWeekday = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("pt-PT", { weekday: "short", day: "2-digit", month: "2-digit" })

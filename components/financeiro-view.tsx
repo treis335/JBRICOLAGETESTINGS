@@ -2,11 +2,11 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
+import  from "@/components/ui/badge"
 import {
   Select,
   SelectContent,
@@ -27,12 +27,11 @@ import {
 } from "@/components/ui/alert-dialog"
 import {
   Trash2, Plus, TrendingUp, TrendingDown, AlertCircle,
-  CheckCircle2, Clock, CreditCard, Wallet, ArrowUpDown,
-  CalendarDays, ChevronDown,
+  CheckCircle2, Clock, CreditCard, Wallet, ArrowUpDown, ChevronDown,
 } from "lucide-react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
 import type { PaymentMethod } from "@/lib/types"
-import { cn } from "@/lib/utils"
+import { cn, fmt} from "@/lib/utils"
 
 const mesesPorExtenso = [
   "", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -40,7 +39,7 @@ const mesesPorExtenso = [
 ]
 
 const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(value)
+  fmt(value)
 
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("pt-PT", { day: "2-digit", month: "short", year: "numeric" })

@@ -45,7 +45,6 @@ import {
   TrendingUp,
   TrendingDown,
   Calendar,
-  User,
 } from "lucide-react"
 import { StatusPagamento, MetodoPagamento, TipoRecibo } from "@/lib/financial-types"
 

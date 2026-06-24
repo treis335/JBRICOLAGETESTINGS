@@ -3,9 +3,8 @@
 import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import {
-  ChevronLeft, ChevronRight, Plus, Calendar, Clock,
-  Euro, Zap, Users, Package, Briefcase, HardHat,
-  X, CheckCircle2, TrendingUp, Banknote, FileText,
+  ChevronLeft, ChevronRight, Plus, Calendar, Clock, Zap, Users, Package, Briefcase, HardHat,
+  X, CheckCircle2, Banknote, FileText,
 } from "lucide-react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { useWorkTracker } from "@/lib/work-tracker-context"

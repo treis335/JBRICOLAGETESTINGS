@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
+import { fmt } from "@/lib/utils"
   Clock, ChevronLeft, ChevronRight, FileDown,
   TrendingUp, Users, Package, CalendarDays,
   Hammer, Euro, BarChart3, CalendarRange,
@@ -17,7 +18,7 @@ import { useWorkTracker } from "@/lib/work-tracker-context"
 import { useAuth } from "@/lib/AuthProvider"
 import { db } from "@/lib/firebase"
 import { doc, getDoc } from "firebase/firestore"
-import { type DayEntry, calculateHours } from "@/lib/types"
+import {  calculateHours } from "@/lib/types"
 import { getNomesColaboradores } from "@/lib/colaboradores"
 
 type Period = "daily" | "weekly" | "monthly"
@@ -136,7 +137,7 @@ export function ReportsView({ initialDate }: { initialDate?: Date } = {}) {
 }
 
   const formatCurrency = (v: number) =>
-    new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
+    fmt(v)
 
   const formatDate = (dateStr: string, short = true) => {
     const date = new Date(dateStr)
@@ -234,7 +235,7 @@ export function ReportsView({ initialDate }: { initialDate?: Date } = {}) {
     const autoTable = (await import("jspdf-autotable")).default
 
     const fmtEur = (v: number) =>
-      new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
+      fmt(v)
 
     const nomeUser = username
 
