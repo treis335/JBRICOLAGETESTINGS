@@ -26,7 +26,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { useRouter } from "next/navigation"
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { cn } from "@/lib/utils"
+import { cn, fmt, fmtMonth, fmtShortMonth, resolveEntryTaxa } from "@/lib/utils"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Payment {
@@ -59,22 +59,8 @@ interface CollabFinance {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const DELETE_WARN_KEY = "adminDeletePaymentWarnDismissed"
-const fmt = (v: number) =>
-  new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
-const fmtMonth = (key: string) =>
-  new Date(key + "-02").toLocaleDateString("pt-PT", { month: "long", year: "numeric" })
-const fmtShortMonth = (key: string) =>
-  new Date(key + "-02").toLocaleDateString("pt-PT", { month: "short", year: "2-digit" })
 const getTodayKey = () => new Date().toISOString().slice(0, 7)
 
-function resolveEntryTaxa(entry: any, rate: number): number {
-  if (typeof entry.taxaHoraria === "number" && entry.taxaHoraria > 0) return entry.taxaHoraria
-  if (Array.isArray(entry.services) && entry.services.length > 0) {
-    const t = entry.services[0]?.taxaHoraria
-    if (typeof t === "number" && t > 0) return t
-  }
-  return rate
-}
 
 function initials(name: string) {
   return name.split(" ").slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()

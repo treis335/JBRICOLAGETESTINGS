@@ -12,20 +12,10 @@ import {
 import { useCollaborators } from "@/hooks/useCollaborators"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn, fmt, resolveEntryTaxa } from "@/lib/utils"
 import type { AdminTabType } from "@/components/admin/admin-bottom-nav"
 
-const fmt = (v: number) =>
-  new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
 
-function resolveEntryTaxa(entry: any, currentRate: number): number {
-  if (typeof entry.taxaHoraria === "number" && entry.taxaHoraria > 0) return entry.taxaHoraria
-  if (Array.isArray(entry.services) && entry.services.length > 0) {
-    const t = entry.services[0]?.taxaHoraria
-    if (typeof t === "number" && t > 0) return t
-  }
-  return currentRate
-}
 
 // ─── Sparkline ────────────────────────────────────────────────────────────────
 function Sparkline({ values, color = "#3b82f6" }: { values: number[]; color?: string }) {

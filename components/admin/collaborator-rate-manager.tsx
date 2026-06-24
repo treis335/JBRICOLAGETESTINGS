@@ -38,7 +38,7 @@ interface CollaboratorRateManagerProps {
 }
 
 const formatCurrency = (v: number) =>
-  new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
+  
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("pt-PT", {

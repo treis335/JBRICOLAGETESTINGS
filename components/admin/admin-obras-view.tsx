@@ -29,7 +29,7 @@ import {
   BookOpen, Package, FileText, ArrowRightLeft,
 } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
+import { cn, fmt } from "@/lib/utils"
 
 // ── Tipos ─────────────────────────────────────────────────────────────────
 
@@ -509,7 +509,7 @@ function ObraDetailTabs({
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {[
               { icon: Clock,    label: "Horas",         value: `${stats.totalHoras.toFixed(1)}h`, color: "text-blue-600 dark:text-blue-400",      bg: "bg-blue-50 dark:bg-blue-950/25",      border: "border-blue-100 dark:border-blue-900/40"      },
-              { icon: Euro,     label: "Custo",         value: fmtEur(stats.totalCusto),          color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-950/25", border: "border-emerald-100 dark:border-emerald-900/40" },
+              { icon: Euro,     label: "Custo",         value: fmt(stats.totalCusto),          color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-950/25", border: "border-emerald-100 dark:border-emerald-900/40" },
               { icon: Users,    label: "Colaboradores", value: `${stats.colaboradores.length}`,   color: "text-violet-600 dark:text-violet-400",   bg: "bg-violet-50 dark:bg-violet-950/25",   border: "border-violet-100 dark:border-violet-900/40"  },
               { icon: Activity, label: "Registos",      value: `${stats.totalEntradas}`,          color: "text-orange-600 dark:text-orange-400",   bg: "bg-orange-50 dark:bg-orange-950/25",   border: "border-orange-100 dark:border-orange-900/40"  },
             ].map(({ icon: Icon, label, value, color, bg, border }) => (
@@ -970,8 +970,7 @@ export function AdminObrasView() {
   }
 
   const fmtDate = (iso: string) => new Date(iso).toLocaleDateString("pt-PT", { day: "2-digit", month: "short", year: "numeric" })
-  const fmtEur  = (v: number)  => new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
-
+  
   if (loading) return (
     <div className="flex items-center justify-center min-h-[400px]">
       <div className="flex flex-col items-center gap-3">

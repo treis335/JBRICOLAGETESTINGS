@@ -8,7 +8,7 @@ import {
   TrendingUp, Zap, Users, Package, Briefcase,
   HardHat, X, CheckCircle2, FileText,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, fmt, resolveEntryTaxa } from "@/lib/utils"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { formatLocalDate } from "@/lib/date-utils"
 import { CollaboratorReportsView } from "@/components/admin/collaborator-reports-view"
@@ -20,17 +20,7 @@ interface CollaboratorCalendarViewProps {
   entries: any[]
 }
 
-function resolveEntryTaxa(entry: any, currentRate: number): number {
-  if (typeof entry.taxaHoraria === "number" && entry.taxaHoraria > 0) return entry.taxaHoraria
-  if (Array.isArray(entry.services) && entry.services.length > 0) {
-    const s0Taxa = entry.services[0]?.taxaHoraria
-    if (typeof s0Taxa === "number" && s0Taxa > 0) return s0Taxa
-  }
-  return currentRate
-}
 
-const fmt = (v: number) =>
-  new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
 
 // ─── Entry Detail Content ──────────────────────────────────────────────────────
 function EntryDetail({

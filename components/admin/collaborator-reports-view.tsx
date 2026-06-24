@@ -8,7 +8,7 @@ import {
   ChevronLeft, ChevronRight, FileDown, Calendar,
   Clock, TrendingUp, Zap, Euro, Building2,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, fmt, resolveEntryTaxa } from "@/lib/utils"
 
 import { formatLocalDate } from "@/lib/date-utils"
 
@@ -25,14 +25,6 @@ interface CollaboratorReportsViewProps {
 
 type Period = "daily" | "weekly" | "monthly"
 
-function resolveEntryTaxa(entry: any, currentRate: number): number {
-  if (typeof entry.taxaHoraria === "number" && entry.taxaHoraria > 0) return entry.taxaHoraria
-  if (Array.isArray(entry.services) && entry.services.length > 0) {
-    const s0Taxa = entry.services[0]?.taxaHoraria
-    if (typeof s0Taxa === "number" && s0Taxa > 0) return s0Taxa
-  }
-  return currentRate
-}
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(value)
