@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { fmt } from "@/lib/utils"
 
 export interface RateHistoryEntry {
   taxa: number
