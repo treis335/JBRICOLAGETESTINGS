@@ -479,11 +479,20 @@ export function AdminCollaboratorsView() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full min-h-[400px]">
-        <div className="flex flex-col items-center gap-3">
-          <Spinner className="h-8 w-8 text-primary" />
-          <p className="text-sm text-muted-foreground">A carregar colaboradores...</p>
-        </div>
+      <div className="p-4 space-y-3 animate-pulse">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="flex items-center gap-4 p-4 rounded-2xl border bg-card">
+            <div className="skeleton h-12 w-12 rounded-2xl shrink-0" />
+            <div className="flex-1 space-y-2">
+              <div className="skeleton h-4 w-36 rounded" />
+              <div className="skeleton h-3 w-24 rounded" />
+            </div>
+            <div className="space-y-1.5 text-right hidden sm:block">
+              <div className="skeleton h-4 w-16 rounded ml-auto" />
+              <div className="skeleton h-3 w-12 rounded ml-auto" />
+            </div>
+          </div>
+        ))}
       </div>
     )
   }

@@ -368,10 +368,35 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
   }, [collaborators, monthKey, selectedMonth, selectedYear, NOW_KEY])
 
   if (loading) return (
-    <div className="flex items-center justify-center h-full min-h-[400px]">
-      <div className="flex flex-col items-center gap-3">
-        <Spinner className="h-8 w-8 text-primary" />
-        <p className="text-sm text-muted-foreground">A carregar dashboard...</p>
+    <div className="p-4 pb-24 md:p-8 space-y-6 max-w-7xl mx-auto animate-pulse">
+      {/* KPI skeleton */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="rounded-2xl border bg-card p-4 space-y-3">
+            <div className="skeleton h-8 w-8 rounded-xl" />
+            <div className="skeleton h-7 w-24 rounded-lg" />
+            <div className="skeleton h-3 w-16 rounded" />
+          </div>
+        ))}
+      </div>
+      {/* Charts skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="md:col-span-2 rounded-2xl border bg-card p-5 space-y-3">
+          <div className="skeleton h-4 w-32 rounded" />
+          <div className="skeleton h-40 w-full rounded-xl" />
+        </div>
+        <div className="rounded-2xl border bg-card p-5 space-y-3">
+          <div className="skeleton h-4 w-24 rounded" />
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex gap-3 items-center">
+              <div className="skeleton h-9 w-9 rounded-xl shrink-0" />
+              <div className="flex-1 space-y-1.5">
+                <div className="skeleton h-3 w-full rounded" />
+                <div className="skeleton h-2 w-3/4 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

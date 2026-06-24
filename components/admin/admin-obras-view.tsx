@@ -908,11 +908,20 @@ export function AdminObrasView() {
   const fmtDate = (iso: string) => new Date(iso).toLocaleDateString("pt-PT", { day: "2-digit", month: "short", year: "numeric" })
   
   if (loading) return (
-    <div className="flex items-center justify-center min-h-[400px]">
-      <div className="flex flex-col items-center gap-3">
-        <Spinner className="h-7 w-7 text-primary" />
-        <p className="text-sm text-muted-foreground">A carregar obras...</p>
+    <div className="p-4 space-y-3 animate-pulse">
+      <div className="flex gap-2 mb-4">
+        <div className="skeleton h-10 flex-1 rounded-xl" />
+        <div className="skeleton h-10 w-10 rounded-xl" />
       </div>
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="rounded-2xl border bg-card overflow-hidden">
+          <div className="skeleton w-full h-28" />
+          <div className="p-4 space-y-2">
+            <div className="skeleton h-4 w-40 rounded" />
+            <div className="skeleton h-3 w-28 rounded" />
+          </div>
+        </div>
+      ))}
     </div>
   )
 

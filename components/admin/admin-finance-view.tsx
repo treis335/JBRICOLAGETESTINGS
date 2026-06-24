@@ -719,10 +719,29 @@ export function AdminFinanceView() {
   }, [financeData])
 
   if (loading) return (
-    <div className="flex items-center justify-center h-full min-h-[400px]">
-      <div className="flex flex-col items-center gap-3">
-        <Spinner className="h-8 w-8 text-primary" />
-        <p className="text-sm text-muted-foreground">A carregar…</p>
+    <div className="p-4 space-y-4 animate-pulse max-w-5xl mx-auto">
+      {/* KPI skeleton */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="rounded-2xl border bg-card p-4 space-y-2">
+            <div className="skeleton h-8 w-8 rounded-xl" />
+            <div className="skeleton h-6 w-20 rounded" />
+            <div className="skeleton h-3 w-14 rounded" />
+          </div>
+        ))}
+      </div>
+      {/* List skeleton */}
+      <div className="rounded-2xl border bg-card overflow-hidden">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="flex items-center gap-4 px-5 py-4 border-b border-border/20 last:border-0">
+            <div className="skeleton h-10 w-10 rounded-xl shrink-0" />
+            <div className="flex-1 space-y-2">
+              <div className="skeleton h-3 w-32 rounded" />
+              <div className="skeleton h-2 w-48 rounded" />
+            </div>
+            <div className="skeleton h-8 w-24 rounded-xl" />
+          </div>
+        ))}
       </div>
     </div>
   )
