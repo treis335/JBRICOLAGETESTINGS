@@ -110,7 +110,7 @@ function KpiCard({ icon, label, value, sub, sparkValues, accent, onClick }: {
   return (
     <div
       onClick={onClick}
-      className={cn("relative overflow-hidden rounded-2xl border p-5 transition-all duration-200", a.bg, onClick && "cursor-pointer hover:shadow-md hover:scale-[1.01] active:scale-[0.99]")}
+      className={cn("relative overflow-hidden rounded-2xl border p-4 md:p-5 transition-all duration-200 animate-fade-in-up", a.bg, onClick && "cursor-pointer hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99] press-effect")}
     >
       <div className="flex items-start justify-between mb-3">
         <div className={cn("p-2 rounded-xl", a.iconBg)}>
@@ -118,7 +118,7 @@ function KpiCard({ icon, label, value, sub, sparkValues, accent, onClick }: {
         </div>
         {sparkValues && sparkValues.length > 1 && <Sparkline values={sparkValues} color={a.spark} />}
       </div>
-      <p className={cn("text-2xl md:text-3xl font-bold tracking-tight", a.text)}>{value}</p>
+      <p className={cn("text-2xl md:text-3xl font-black tracking-tight", a.text)}>{value}</p>
       <p className="text-xs font-semibold text-muted-foreground mt-0.5">{label}</p>
       <p className="text-xs text-muted-foreground mt-2">{sub}</p>
     </div>
@@ -456,7 +456,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
         />
 
         {/* ── KPI Grid ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 stagger-children">
           <KpiCard accent="purple" icon={<Clock className="h-4 w-4" />}
             label="Horas (Mês)" value={`${stats.totalHours.toFixed(1)}h`}
             sub={`${stats.active} colaborador${stats.active !== 1 ? "es" : ""} ativo${stats.active !== 1 ? "s" : ""}`}

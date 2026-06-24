@@ -199,11 +199,11 @@ export function FinanceiroView() {
 
         {/* ── Page Title ── */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 shadow-sm">
-            <TrendingUp className="h-5 w-5 text-emerald-600" />
+          <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/20 flex items-center justify-center">
+            <TrendingUp className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-bold tracking-tight">Financeiro</h1>
+            <h1 className="text-xl md:text-2xl font-black tracking-tight">Financeiro</h1>
             <p className="text-xs text-muted-foreground mt-0.5">Controlo de pagamentos e saldos</p>
           </div>
         </div>

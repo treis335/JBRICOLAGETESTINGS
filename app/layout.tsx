@@ -67,7 +67,7 @@ export default function RootLayout({
         <AuthProvider>
           <WorkTrackerProvider>
             <Header />
-            <div className="pt-16">{children}</div>
+            <div className="pt-14">{children}</div>
             <Analytics />
           </WorkTrackerProvider>
         </AuthProvider>

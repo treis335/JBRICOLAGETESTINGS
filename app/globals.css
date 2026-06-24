@@ -274,3 +274,118 @@
 [data-hide-close-button] [data-dialog-close] {
   display: none !important;
 }
+/* ── Ripple effect ── */
+@keyframes ripple {
+  from { transform: scale(0); opacity: 0.35; }
+  to   { transform: scale(4); opacity: 0; }
+}
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+.ripple-effect::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, currentColor 1%, transparent 1%);
+  background-size: 0%;
+  pointer-events: none;
+  transition: background-size 0.4s ease-out, opacity 0.4s ease-out;
+}
+.ripple-effect:active::after {
+  background-size: 200%;
+  opacity: 0;
+}
+
+/* ── Gradient text ── */
+.gradient-text {
+  background: linear-gradient(135deg, oklch(0.55 0.18 250), oklch(0.65 0.15 200));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Number counter animation ── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-count { animation: count-up 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* ── Stagger children helper ── */
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 60ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 120ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 180ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 300ms; }
+
+/* ── Glow shadow for primary elements ── */
+.glow-primary {
+  box-shadow: 0 0 20px oklch(0.55 0.18 250 / 0.25), 0 4px 12px oklch(0.55 0.18 250 / 0.15);
+}
+
+/* ── Card hover lift ── */
+.card-lift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px oklch(0 0 0 / 0.12);
+}
+
+/* ── Input focus ring ── */
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px oklch(0.55 0.18 250 / 0.15), 0 0 0 1px oklch(0.55 0.18 250 / 0.5);
+}
+
+/* ── Tag badge ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid;
+}
+
+/* ── Success / Error toast-like states ── */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-right { animation: slide-in-right 0.3s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* ── Floating label inputs ── */
+.input-group {
+  position: relative;
+}
+
+/* ── Better focus states for buttons ── */
+button:focus-visible {
+  outline: 2px solid oklch(0.55 0.18 250 / 0.6);
+  outline-offset: 2px;
+}
+
+/* ── Smooth height transitions ── */
+.expand-transition {
+  transition: max-height 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.2s ease;
+  overflow: hidden;
+}
+
+/* ── Bottom sheet drag handle ── */
+.drag-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 99px;
+  background: oklch(0.75 0.01 250);
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+.dark .drag-handle {
+  background: oklch(0.35 0.01 250);
+}

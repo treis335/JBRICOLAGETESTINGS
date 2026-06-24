@@ -500,9 +500,9 @@ export function ReportsView() {
         <div className="px-4 pt-3 pb-2 md:px-8">
           <Tabs value={period} onValueChange={(v) => setPeriod(v as Period)}>
             <TabsList className="w-full grid grid-cols-3 h-9 md:w-auto md:inline-grid">
-              <TabsTrigger value="daily" className="text-sm">Diário</TabsTrigger>
-              <TabsTrigger value="weekly" className="text-sm">Semanal</TabsTrigger>
-              <TabsTrigger value="monthly" className="text-sm">Mensal</TabsTrigger>
+              <TabsTrigger value="daily" className="text-sm font-semibold press-effect">Diário</TabsTrigger>
+              <TabsTrigger value="weekly" className="text-sm font-semibold press-effect">Semanal</TabsTrigger>
+              <TabsTrigger value="monthly" className="text-sm font-semibold press-effect">Mensal</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -518,16 +518,16 @@ export function ReportsView() {
         </div>
 
         {hasEntries && (
-          <div className="grid grid-cols-4 divide-x divide-border border-t bg-muted/20">
+          <div className="grid grid-cols-4 divide-x divide-border/50 border-t border-border/50 bg-background/40">
             {[
-              { value: filteredEntries.length.toString(), label: "dias", color: "text-foreground" },
-              { value: `${totals.totalHoras}h`, label: "total", color: "text-blue-600 dark:text-blue-400" },
-              { value: `${totals.totalExtras}h`, label: "extras", color: "text-red-500 dark:text-red-400" },
+              { value: filteredEntries.length.toString(), label: "dias",   color: "text-foreground" },
+              { value: `${totals.totalHoras}h`, label: "horas", color: "text-blue-600 dark:text-blue-400" },
+              { value: `${totals.totalExtras}h`, label: "extras", color: "text-orange-500 dark:text-orange-400" },
               { value: `${totals.valorTotal.toFixed(0)}€`, label: "valor", color: "text-emerald-600 dark:text-emerald-400" },
             ].map((kpi) => (
               <div key={kpi.label} className="flex flex-col items-center py-2.5">
-                <span className={`text-base font-bold leading-none tabular-nums ${kpi.color}`}>{kpi.value}</span>
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-semibold mt-0.5">{kpi.label}</span>
+                <span className={`text-[15px] font-black leading-none tabular-nums tracking-tight ${kpi.color}`}>{kpi.value}</span>
+                <span className="text-[9px] uppercase tracking-widest text-muted-foreground/50 font-bold">{kpi.label}</span>
               </div>
             ))}
           </div>
@@ -593,11 +593,11 @@ export function ReportsView() {
                   <CardContent className="p-4 md:p-5">
                     <div className="flex items-center gap-2 text-muted-foreground mb-2.5">
                       <div className="w-7 h-7 rounded-xl bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
-                        <TrendingUp className="h-3.5 w-3.5 text-red-500 dark:text-red-400" />
+                        <TrendingUp className="h-3.5 w-3.5 text-orange-500 dark:text-orange-400" />
                       </div>
                       <span className="text-xs font-bold uppercase tracking-wide">Extras</span>
                     </div>
-                    <p className="text-3xl md:text-4xl font-black text-red-500 dark:text-red-400">{totals.totalExtras}h</p>
+                    <p className="text-3xl md:text-4xl font-black text-orange-500 dark:text-orange-400">{totals.totalExtras}h</p>
                   </CardContent>
                 </Card>
 

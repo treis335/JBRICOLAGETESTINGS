@@ -550,7 +550,7 @@ export function CalendarView({ onSelectDate, onAddToday }: CalendarViewProps) {
       <Button
         onClick={onAddToday}
         size="lg"
-        className="fixed bottom-24 right-4 h-14 px-5 rounded-2xl shadow-lg shadow-emerald-600/30 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white z-40 gap-2 transition-all duration-200 press-effect hover:shadow-emerald-600/40 hover:shadow-xl hover:-translate-y-0.5"
+        className="fixed bottom-[88px] right-4 h-[52px] px-5 rounded-2xl shadow-xl shadow-emerald-600/30 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 active:from-emerald-600 active:to-emerald-700 text-white z-40 gap-2 transition-all duration-200 press-effect hover:shadow-emerald-500/40 hover:shadow-2xl hover:-translate-y-1 glow-primary"
       >
         <Plus className="h-5 w-5" />
         <span className="font-bold tracking-tight">Hoje</span>

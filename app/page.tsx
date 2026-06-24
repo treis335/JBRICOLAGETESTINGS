@@ -1,7 +1,7 @@
 //app/page.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
 
 import { CalendarView } from "@/components/calendar-view"
@@ -17,7 +17,7 @@ function LoadingScreen() {
       <div className="flex flex-col items-center gap-6 animate-fade-in">
         {/* Logo mark */}
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg shadow-primary/10">
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="4" y="20" width="24" height="4" rx="2" fill="currentColor" className="text-primary" />
               <rect x="8" y="14" width="16" height="4" rx="2" fill="currentColor" className="text-primary opacity-70" />
@@ -38,10 +38,10 @@ function LoadingScreen() {
           </svg>
         </div>
 
-        {/* Text */}
+        {/* Brand */}
         <div className="text-center animate-fade-in delay-100">
-          <p className="text-sm font-semibold text-foreground/80 tracking-wide">JBRICOLAGE</p>
-          <p className="text-xs text-muted-foreground/60 mt-1 animate-fade-in delay-200">A carregar dados…</p>
+          <p className="text-sm font-black tracking-widest text-foreground/80 uppercase">JBRICOLAGE</p>
+          <p className="text-xs text-muted-foreground/50 mt-1 animate-fade-in delay-200">A carregar dados…</p>
         </div>
 
         {/* Skeleton bars */}
@@ -51,6 +51,37 @@ function LoadingScreen() {
           <div className="skeleton h-2 w-5/6" />
         </div>
       </div>
+    </div>
+  )
+}
+
+// Animated tab wrapper
+function TabPane({ active, children }: { active: boolean; children: React.ReactNode }) {
+  const [rendered, setRendered] = useState(active)
+  const [visible, setVisible] = useState(active)
+
+  useEffect(() => {
+    if (active) {
+      setRendered(true)
+      // Small delay so the CSS animation triggers after mount
+      requestAnimationFrame(() => setVisible(true))
+    } else {
+      setVisible(false)
+      const t = setTimeout(() => setRendered(false), 250)
+      return () => clearTimeout(t)
+    }
+  }, [active])
+
+  if (!rendered) return null
+
+  return (
+    <div
+      style={{
+        animation: visible ? "fade-in-up 0.3s cubic-bezier(0.16,1,0.3,1) both" : "none",
+        opacity: visible ? undefined : 0,
+      }}
+    >
+      {children}
     </div>
   )
 }
@@ -81,16 +112,19 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <main className="flex-1 pb-16 animate-fade-in">
-        {activeTab === "calendar" && (
-          <CalendarView
-            onSelectDate={handleSelectDate}
-            onAddToday={handleAddToday}
-          />
-        )}
-        {activeTab === "reports"    && <ReportsView />}
-        {activeTab === "financeiro" && <FinanceiroView />}
-        {activeTab === "settings"   && <SettingsView />}
+      <main className="flex-1 pb-16">
+        <TabPane active={activeTab === "calendar"}>
+          <CalendarView onSelectDate={handleSelectDate} onAddToday={handleAddToday} />
+        </TabPane>
+        <TabPane active={activeTab === "reports"}>
+          <ReportsView />
+        </TabPane>
+        <TabPane active={activeTab === "financeiro"}>
+          <FinanceiroView />
+        </TabPane>
+        <TabPane active={activeTab === "settings"}>
+          <SettingsView />
+        </TabPane>
       </main>
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />

@@ -2,6 +2,7 @@
 "use client"
 
 import { LayoutDashboard, Users, FileText, Settings, Euro, HardHat } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export type AdminTabType = "dashboard" | "collaborators" | "finance" | "obras" | "reports" | "settings"
 
@@ -10,45 +11,82 @@ interface AdminBottomNavProps {
   onTabChange: (tab: AdminTabType) => void
 }
 
+const tabs = [
+  { id: "dashboard"     as AdminTabType, label: "Início",     icon: LayoutDashboard },
+  { id: "collaborators" as AdminTabType, label: "Equipa",     icon: Users           },
+  { id: "obras"         as AdminTabType, label: "Obras",      icon: HardHat         },
+  { id: "finance"       as AdminTabType, label: "Finanças",   icon: Euro            },
+  { id: "reports"       as AdminTabType, label: "Relatórios", icon: FileText        },
+  { id: "settings"      as AdminTabType, label: "Config.",    icon: Settings        },
+]
+
 export function AdminBottomNav({ activeTab, onTabChange }: AdminBottomNavProps) {
-  const tabs = [
-    { id: "dashboard"     as AdminTabType, label: "Início",    icon: LayoutDashboard },
-    { id: "collaborators" as AdminTabType, label: "Equipa",    icon: Users           },
-    { id: "obras"         as AdminTabType, label: "Obras",     icon: HardHat         },
-    { id: "finance"       as AdminTabType, label: "Finanças",  icon: Euro            },
-    { id: "reports"       as AdminTabType, label: "Relatórios",icon: FileText        },
-    { id: "settings"      as AdminTabType, label: "Config.",   icon: Settings        },
-  ]
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg">
-      <div className="px-1 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]">
-        <div className="grid grid-cols-6 gap-0">
-          {tabs.map((tab) => {
-            const Icon = tab.icon
-            const isActive = activeTab === tab.id
+    <nav className="fixed bottom-0 left-0 right-0 z-50">
+      {/* Glassmorphism backdrop */}
+      <div
+        className="absolute inset-0 bg-card/85 backdrop-blur-xl border-t border-border/50"
+        style={{ WebkitBackdropFilter: "blur(20px)" }}
+      />
 
-            return (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={`
-                  relative flex flex-col items-center justify-center gap-0.5 py-2 px-0.5 rounded-xl
-                  transition-all duration-200 min-w-0
-                  ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}
-                `}
-              >
-                {isActive && (
-                  <span className="absolute inset-0 rounded-xl bg-primary/10" />
-                )}
-                <Icon className={`h-[20px] w-[20px] shrink-0 transition-transform duration-200 ${isActive ? "scale-110" : ""}`} />
-                <span className={`text-[9px] font-medium leading-none truncate w-full text-center transition-colors ${isActive ? "text-primary" : ""}`}>
-                  {tab.label}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+      <div className="relative grid grid-cols-6 max-w-2xl mx-auto px-1 pb-safe"
+           style={{ height: "64px" }}>
+        {tabs.map((tab) => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
+
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className={cn(
+                "relative flex flex-col items-center justify-center gap-0.5 h-full",
+                "transition-all duration-200 ease-out press-effect",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-xl",
+              )}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {/* Active pill */}
+              {isActive && (
+                <span
+                  className="absolute inset-x-1 top-2 bottom-2 rounded-xl bg-primary/10 animate-scale-in"
+                  aria-hidden
+                />
+              )}
+
+              {/* Active top indicator */}
+              {isActive && (
+                <span
+                  className="absolute top-0 left-1/2 -translate-x-1/2 h-0.5 w-6 rounded-full bg-primary"
+                  style={{ animation: "nav-indicator 0.25s cubic-bezier(0.34,1.56,0.64,1) both" }}
+                  aria-hidden
+                />
+              )}
+
+              {/* Icon */}
+              <span className={cn(
+                "relative z-10 transition-all duration-200",
+                isActive ? "text-primary scale-110" : "text-muted-foreground/70"
+              )}>
+                <Icon
+                  className={cn(
+                    "transition-all duration-200",
+                    isActive ? "h-[18px] w-[18px] drop-shadow-[0_0_6px_oklch(0.55_0.18_250/0.4)]" : "h-[18px] w-[18px]"
+                  )}
+                  strokeWidth={isActive ? 2.2 : 1.8}
+                />
+              </span>
+
+              {/* Label */}
+              <span className={cn(
+                "relative z-10 text-[9px] font-semibold tracking-tight transition-all duration-200 leading-none truncate w-full text-center",
+                isActive ? "text-primary" : "text-muted-foreground/60"
+              )}>
+                {tab.label}
+              </span>
+            </button>
+          )
+        })}
       </div>
     </nav>
   )

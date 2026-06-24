@@ -504,7 +504,7 @@ export function AdminCollaboratorsView() {
   }
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full animate-fade-in">
       <div className="w-full max-w-5xl mx-auto px-3 sm:px-6 md:px-8 py-6 pb-24 space-y-6">
 
         {/* Header */}
