@@ -140,3 +140,40 @@ input[type="file"],
 summary {
   cursor: pointer;
 }
+
+/* ── Cursor mãozinha universal — qualquer elemento clicável ─────────────────
+   Cobre onClick do React, itens de menu, dropdowns, tabs, etc.             */
+[onclick],
+[data-radix-collection-item],
+[data-state],
+[data-orientation],
+[role="menuitem"],
+[role="menuitemcheckbox"],
+[role="menuitemradio"],
+[role="option"],
+[role="tab"],
+[role="treeitem"],
+[role="gridcell"],
+[role="row"],
+[role="link"],
+[role="checkbox"],
+[role="radio"],
+[role="switch"],
+[role="combobox"],
+[role="listbox"],
+[role="spinbutton"],
+[role="slider"],
+[role="menubar"] *,
+[data-slot="sidebar-menu-item"],
+[data-slot="sidebar-menu-button"],
+[data-sidebar="menu-button"],
+[data-sidebar="menu-item"],
+[data-sidebar="menu-sub-item"],
+li[class*="cursor"],
+div[class*="select"],
+div[class*="dropdown"],
+div[class*="menu"] li,
+div[class*="menu"] a,
+div[class*="menu"] button {
+  cursor: pointer;
+}
