@@ -241,26 +241,31 @@ function ObraPicker({ open, onClose, onSelect }: ObraPickerProps) {
               )}
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto border-t border-border/15">
+          <div className="flex-1 overflow-y-auto">
             {loading ? (
               <div className="py-20 text-center">
-                <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                  <div className="w-4 h-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-                  A carregar...
+                <div className="inline-flex flex-col items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+                  A carregar obras…
                 </div>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="py-20 text-center space-y-3">
-                <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center mx-auto">
-                  <HardHat className="h-7 w-7 text-muted-foreground/30" />
+              <div className="py-20 text-center space-y-3 animate-fade-in">
+                <div className="w-16 h-16 rounded-3xl bg-muted/50 flex items-center justify-center mx-auto border border-border/30">
+                  <HardHat className="h-8 w-8 text-muted-foreground/25" />
                 </div>
-                <p className="text-sm text-muted-foreground font-medium">
-                  {obras.length === 0 ? "Nenhuma obra ativa" : "Nenhum resultado"}
-                </p>
+                <div>
+                  <p className="text-sm font-semibold text-foreground/70">
+                    {obras.length === 0 ? "Nenhuma obra ativa" : "Sem resultados"}
+                  </p>
+                  <p className="text-xs text-muted-foreground/50 mt-1">
+                    {obras.length === 0 ? "Cria uma obra no painel admin" : "Tenta pesquisar por outro termo"}
+                  </p>
+                </div>
               </div>
             ) : (
-              <div className="divide-y divide-border/10">
-                {filtered.map(obra => {
+              <div className="px-3 py-2 space-y-2">
+                {filtered.map((obra, i) => {
                   const ec = ESTADO_COLORS[obra.estado]
                   const morada = [obra.moradaRua, obra.moradaCidade].filter(Boolean).join(", ")
                   return (
@@ -268,47 +273,52 @@ function ObraPicker({ open, onClose, onSelect }: ObraPickerProps) {
                       key={obra.id}
                       type="button"
                       onClick={() => { onSelect(obra); onClose() }}
-                      className="w-full text-left flex items-center gap-3.5 px-5 py-4 hover:bg-muted/25 active:bg-muted/40 transition-colors group"
+                      className="w-full text-left flex items-center gap-3 p-3 rounded-2xl border border-border/40 bg-card hover:bg-muted/30 hover:border-primary/25 hover:shadow-sm active:scale-[0.99] transition-all press-effect group animate-fade-in"
+                      style={{ animationDelay: `${i * 40}ms` }}
                     >
+                      {/* Color strip */}
                       <div
-                        className="relative w-16 h-16 rounded-2xl overflow-hidden shrink-0 border border-border/25 shadow-sm"
+                        className="w-1 self-stretch rounded-full shrink-0"
+                        style={{ backgroundColor: obra.cor }}
+                      />
+                      {/* Thumbnail */}
+                      <div
+                        className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-border/20"
                         style={{ backgroundColor: obra.cor + "18" }}
                         onClick={e => { if (obra.fotoUrl) { e.stopPropagation(); setLightboxSrc(obra.fotoUrl) } }}
                       >
                         {obra.fotoUrl ? (
-                          <>
-                            <img src={obra.fotoUrl} alt={obra.nome} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-colors flex items-center justify-center">
-                              <ZoomIn className="h-4 w-4 text-white opacity-0 hover:opacity-100 transition-opacity drop-shadow" />
-                            </div>
-                          </>
+                          <img src={obra.fotoUrl} alt={obra.nome} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <HardHat className="h-7 w-7 opacity-20" style={{ color: obra.cor }} />
+                            <HardHat className="h-6 w-6 opacity-25" style={{ color: obra.cor }} />
                           </div>
                         )}
                       </div>
+                      {/* Info */}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate text-foreground">{obra.nome}</p>
+                        <p className="text-sm font-bold truncate text-foreground leading-snug">{obra.nome}</p>
                         {morada && (
-                          <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5 truncate">
+                          <p className="text-[11px] text-muted-foreground/70 flex items-center gap-1 mt-0.5 truncate">
                             <MapPin className="h-2.5 w-2.5 shrink-0" />{morada}
                           </p>
                         )}
-                        <span className={`inline-flex items-center gap-1 mt-1.5 rounded-full text-[10px] font-bold px-1.5 py-0.5 ${ec.bg} ${ec.text}`}>
-                          <span className={`w-1 h-1 rounded-full ${ec.dot}`} />
-                          {ESTADO_LABELS[obra.estado]}
-                        </span>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className={`inline-flex items-center gap-1 rounded-full text-[9px] font-bold px-1.5 py-0.5 ${ec.bg} ${ec.text}`}>
+                            <span className={`w-1 h-1 rounded-full ${ec.dot}`} />
+                            {ESTADO_LABELS[obra.estado]}
+                          </span>
+                        </div>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-border group-hover:text-muted-foreground shrink-0 transition-colors" />
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary/60 shrink-0 transition-colors" />
                     </button>
                   )
                 })}
               </div>
             )}
           </div>
-          <div className="shrink-0 px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))] border-t border-border/15 bg-background">
-            <button type="button" onClick={onClose} className="w-full h-11 rounded-xl bg-muted/50 hover:bg-muted text-sm font-semibold text-foreground transition-colors">
+          <div className="shrink-0 px-4 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))] border-t border-border/15 bg-background">
+            <button type="button" onClick={onClose} className="w-full h-12 rounded-2xl bg-muted/50 hover:bg-muted text-sm font-semibold text-foreground transition-all press-effect border border-border/30">
               Cancelar
             </button>
           </div>
@@ -829,19 +839,23 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                     <span className={`inline-flex items-center text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${isEditing ? "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"}`}>
-                      {isEditing ? "Editar registo" : "Novo registo"}
+                      {isEditing ? "✏️ Editar" : "✨ Novo"}
                     </span>
                     {isWeekend && (
                       <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">
-                        Extra
+                        🔆 Extra
                       </span>
                     )}
                   </div>
-                  {date && <SheetTitle className="text-2xl font-bold leading-tight text-foreground">{fmtShort(date)}</SheetTitle>}
-                  {date && <p className="text-xs text-muted-foreground/70 capitalize mt-0.5">{date.toLocaleDateString("pt-PT", { weekday: "long" })}</p>}
+                  {date && <SheetTitle className="text-2xl font-black leading-tight text-foreground capitalize">{date.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}</SheetTitle>}
+                  {totalHoras > 0 && (
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
+                      ≈ {new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(totalHoras * data.settings.taxaHoraria)}
+                    </p>
+                  )}
                 </div>
-                <button type="button" onClick={onClose} className="w-8 h-8 rounded-full bg-foreground/8 hover:bg-foreground/14 active:scale-95 flex items-center justify-center transition-all shrink-0 mt-0.5">
-                  <X className="h-3.5 w-3.5 text-foreground/60" />
+                <button type="button" onClick={onClose} className="w-9 h-9 rounded-2xl bg-muted/60 hover:bg-muted active:scale-90 flex items-center justify-center transition-all shrink-0 mt-0.5 press-effect">
+                  <X className="h-4 w-4 text-foreground/50" />
                 </button>
               </div>
             </div>
@@ -850,38 +864,69 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
 
               {/* ── Horas do dia ── */}
               <div className="rounded-2xl border border-border/40 bg-card overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-border/25 flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Horas do dia</span>
+                <div className="px-4 py-2.5 border-b border-border/25 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Horas do dia</span>
+                  </div>
+                  {totalHoras > 0 && (
+                    <div className="flex items-center gap-1.5">
+                      {normalHoras > 0 && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400">{normalHoras}h norm.</span>}
+                      {extraHoras > 0 && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">{extraHoras}h extra</span>}
+                    </div>
+                  )}
                 </div>
                 <div className="p-4 space-y-3">
+                  {/* Main stepper */}
                   <div className="flex items-center gap-3">
-                    <button type="button" onClick={() => adjustHours(-1)} className="w-12 h-12 rounded-xl border border-border/40 bg-background hover:bg-muted active:scale-95 flex items-center justify-center transition-all">
-                      <Minus className="h-5 w-5 text-foreground/50" />
+                    <button
+                      type="button"
+                      onClick={() => adjustHours(-1)}
+                      className="w-14 h-14 rounded-2xl border-2 border-border/40 bg-background hover:bg-muted hover:border-border active:scale-90 flex items-center justify-center transition-all press-effect shadow-sm"
+                    >
+                      <Minus className="h-5 w-5 text-foreground/60" />
                     </button>
-                    <Input
-                      type="number"
-                      value={totalHoras}
-                      onChange={e => { const v = Number(e.target.value); if (!isNaN(v)) setTotalHoras(Math.max(0, Math.floor(v))) }}
-                      className="flex-1 h-14 text-center text-4xl font-black border-0 bg-transparent shadow-none focus-visible:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      min={0}
-                      step={1}
-                    />
-                    <button type="button" onClick={() => adjustHours(1)} className="w-12 h-12 rounded-xl border border-border/40 bg-background hover:bg-muted active:scale-95 flex items-center justify-center transition-all">
-                      <Plus className="h-5 w-5 text-foreground/50" />
+                    <div className="flex-1 flex flex-col items-center">
+                      <Input
+                        type="number"
+                        value={totalHoras}
+                        onChange={e => { const v = Number(e.target.value); if (!isNaN(v)) setTotalHoras(Math.max(0, Math.floor(v))) }}
+                        className="w-full h-16 text-center text-5xl font-black border-0 bg-transparent shadow-none focus-visible:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none tracking-tighter"
+                        min={0}
+                        step={1}
+                      />
+                      <p className="text-[10px] text-muted-foreground/40 -mt-1">
+                        {totalHoras === 0 ? "Ausência / Ocorrência" : "horas"}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => adjustHours(1)}
+                      className="w-14 h-14 rounded-2xl border-2 border-border/40 bg-background hover:bg-muted hover:border-border active:scale-90 flex items-center justify-center transition-all press-effect shadow-sm"
+                    >
+                      <Plus className="h-5 w-5 text-foreground/60" />
                     </button>
                   </div>
-                  <div className="flex items-center justify-center gap-2 flex-wrap">
-                    {totalHoras > 0 ? (
-                      <>
-                        {normalHoras > 0 && <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400">{normalHoras}h normais</span>}
-                        {extraHoras > 0 && <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">{extraHoras}h extra</span>}
-                      </>
-                    ) : (
-                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400">Ausência / Ocorrência</span>
-                    )}
+                  {/* Quick preset chips */}
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {[0, 4, 6, 8, 10].map(h => (
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => setTotalHoras(h)}
+                        className={`py-2 rounded-xl text-xs font-bold transition-all press-effect border ${
+                          totalHoras === h
+                            ? h === 0
+                              ? "bg-orange-100 border-orange-300 text-orange-700 dark:bg-orange-950/40 dark:border-orange-800 dark:text-orange-400 shadow-sm"
+                              : "bg-primary/10 border-primary/30 text-primary shadow-sm"
+                            : "bg-background border-border/40 text-muted-foreground hover:bg-muted/60 hover:border-border"
+                        }`}
+                      >
+                        {h === 0 ? "Aus." : `${h}h`}
+                      </button>
+                    ))}
                   </div>
-                  <p className="text-[10px] text-muted-foreground/35 text-center">{dayTypeLabel()}</p>
+                  <p className="text-[10px] text-muted-foreground/30 text-center">{dayTypeLabel()}</p>
                 </div>
               </div>
 
@@ -897,8 +942,8 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                       )}
                     </span>
                   </div>
-                  <button type="button" onClick={handleAddService} className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/70 transition-colors">
-                    <Plus className="h-3.5 w-3.5" />Adicionar
+                  <button type="button" onClick={handleAddService} className="flex items-center gap-1 text-[10px] font-bold text-primary hover:text-primary/70 transition-colors px-2 py-1 rounded-lg hover:bg-primary/8 press-effect">
+                    <Plus className="h-3 w-3" />Adicionar
                   </button>
                 </div>
 
@@ -922,6 +967,7 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                         {/* ── Obra / Serviço — manual first, list as secondary action ── */}
                         <div className="space-y-2">
                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Obra / Serviço</label>
+                          
 
                           {s.obraId && s.obraObj ? (
                             // Obra vinculada
@@ -949,17 +995,18 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                               <Input
                                 value={s.obraNome}
                                 onChange={e => updateService(s.id, { obraNome: e.target.value })}
-                                placeholder="Nome da obra ou serviço..."
+                                placeholder="Nome da obra..."
                                 className="flex-1 h-11 bg-background border-border/45 rounded-xl text-sm focus-visible:ring-primary/20"
+                                autoFocus={false}
                               />
                               <button
                                 type="button"
                                 onClick={() => { setActiveServiceId(s.id); setShowObraPicker(true) }}
-                                title="Selecionar da lista de obras"
-                                className="h-11 px-3 rounded-xl border border-border/45 bg-background hover:bg-primary/5 hover:border-primary/30 flex items-center gap-1.5 transition-all shrink-0 group"
+                                title="Escolher da lista de obras"
+                                className="h-11 px-3.5 rounded-xl border border-primary/25 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 flex items-center gap-1.5 transition-all shrink-0 group press-effect"
                               >
-                                <Search className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
-                                <span className="text-xs font-semibold text-muted-foreground/60 group-hover:text-primary transition-colors hidden sm:inline">Lista</span>
+                                <Search className="h-4 w-4 text-primary/60 group-hover:text-primary transition-colors" />
+                                <span className="text-xs font-bold text-primary/60 group-hover:text-primary transition-colors">Lista</span>
                               </button>
                             </div>
                           )}
@@ -967,12 +1014,12 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
 
                         {/* ── Descrição ── */}
                         <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Descrição</label>
+                          <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Descrição do trabalho</label>
                           <Textarea
                             value={s.descricao}
                             onChange={e => updateService(s.id, { descricao: e.target.value })}
-                            placeholder="Descreve o trabalho realizado..."
-                            className="min-h-[80px] bg-background border-border/45 rounded-xl text-sm resize-none focus-visible:ring-primary/20"
+                            placeholder="Ex: Colocação de azulejos na casa de banho, montagem de armários, pintura de paredes..."
+                            className="min-h-[96px] bg-background border-border/45 rounded-xl text-sm resize-none focus-visible:ring-primary/20 leading-relaxed"
                           />
                         </div>
 
@@ -982,48 +1029,72 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                             <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest flex items-center gap-1.5">
                               <Users className="h-3 w-3" /> Equipa
                             </label>
+                            {s.equipa.length > 0 && (
+                              <button
+                                type="button"
+                                onClick={openTeamSelector}
+                                disabled={loadingCollaborators}
+                                className="text-[10px] font-semibold text-primary hover:text-primary/70 transition-colors flex items-center gap-0.5 disabled:opacity-50 px-2 py-0.5 rounded-lg hover:bg-primary/8"
+                              >
+                                Editar <ChevronRight className="h-2.5 w-2.5" />
+                              </button>
+                            )}
+                          </div>
+                          {s.equipa.length === 0 ? (
                             <button
                               type="button"
                               onClick={openTeamSelector}
                               disabled={loadingCollaborators}
-                              className="text-xs font-semibold text-primary hover:text-primary/70 transition-colors flex items-center gap-0.5 disabled:opacity-50"
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-dashed border-border/50 bg-muted/20 hover:bg-muted/50 hover:border-border transition-all text-sm text-muted-foreground/50 hover:text-muted-foreground"
                             >
-                              Gerir <ChevronRight className="h-3 w-3" />
+                              <Users className="h-4 w-4" />
+                              <span>Tocar para selecionar equipa…</span>
                             </button>
-                          </div>
-                          <div className="min-h-[34px] flex flex-wrap gap-1.5">
-                            {s.equipa.length === 0 ? (
-                              <span className="text-xs text-muted-foreground/35 italic self-center">Ninguém selecionado</span>
-                            ) : (
-                              s.equipa.map((nome, index) => {
+                          ) : (
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {s.equipa.map((nome, index) => {
                                 const uid = s.equipaUids?.[index]
                                 const isLegacy = !uid
+                                const colors = ["bg-blue-500","bg-emerald-500","bg-violet-500","bg-orange-500","bg-pink-500","bg-teal-500"]
+                                const colorIdx = nome.charCodeAt(0) % colors.length
+                                const initials = nome.split(" ").filter(Boolean).slice(0, 2).map((w: string) => w[0].toUpperCase()).join("")
                                 return (
-                                  <span
+                                  <div
                                     key={`${nome}-${index}`}
-                                    className={`inline-flex items-center gap-1 pl-2.5 pr-1 py-1 rounded-full text-xs font-medium border ${
+                                    className={`inline-flex items-center gap-1.5 pl-1 pr-2 py-1 rounded-xl text-xs font-semibold border ${
                                       isLegacy
-                                        ? "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800"
+                                        ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800"
                                         : "bg-primary/7 border-primary/15 text-primary"
                                     }`}
                                   >
+                                    <div className={`w-5 h-5 rounded-lg shrink-0 flex items-center justify-center text-white text-[9px] font-bold ${colors[colorIdx]}`}>
+                                      {initials || "?"}
+                                    </div>
                                     {nome}
-                                    {isLegacy && <span className="text-[9px] opacity-70 ml-0.5">(manual)</span>}
                                     <button
                                       type="button"
                                       onClick={() => updateService(s.id, {
                                         equipa: s.equipa.filter((_, i) => i !== index),
                                         equipaUids: s.equipaUids?.filter((_, i) => i !== index)
                                       })}
-                                      className="w-4 h-4 rounded-full hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors ml-0.5"
+                                      className="w-4 h-4 rounded-full hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
                                     >
                                       <X className="h-2.5 w-2.5" />
                                     </button>
-                                  </span>
+                                  </div>
                                 )
-                              })
-                            )}
-                          </div>
+                              })}
+                              <button
+                                type="button"
+                                onClick={openTeamSelector}
+                                disabled={loadingCollaborators}
+                                className="w-7 h-7 rounded-lg border-2 border-dashed border-primary/30 hover:border-primary/60 bg-primary/5 hover:bg-primary/10 flex items-center justify-center transition-all"
+                                title="Editar equipa"
+                              >
+                                <Plus className="h-3.5 w-3.5 text-primary/60" />
+                              </button>
+                            </div>
+                          )}
                         </div>
 
                       </TabsContent>
@@ -1092,9 +1163,10 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                   type="button"
                   onClick={handleSave}
                   disabled={services.length === 0}
-                  className="w-full h-13 flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none text-white font-bold text-base transition-all shadow-lg shadow-emerald-600/18"
+                  className="w-full h-14 flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none text-white font-bold text-base transition-all shadow-xl shadow-emerald-600/25 press-effect"
                 >
-                  <Check className="h-5 w-5" />Guardar registo
+                  <Check className="h-5 w-5" />
+                  {isEditing ? "Guardar alterações" : "Guardar registo"}
                 </button>
               </div>
             )}
@@ -1111,8 +1183,10 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
 
           <div className="shrink-0 px-5 pt-4 pb-3 space-y-3">
             <SheetHeader className="text-left space-y-0">
-              <SheetTitle className="text-xl font-bold">Equipa</SheetTitle>
-              <SheetDescription className="text-xs text-muted-foreground">Colaboradores neste serviço</SheetDescription>
+              <SheetTitle className="text-xl font-black">Selecionar Equipa</SheetTitle>
+              <SheetDescription className="text-xs text-muted-foreground">
+                {tempEquipa.length === 0 ? "Toca para selecionar os colaboradores" : `${tempEquipa.length} selecionado${tempEquipa.length !== 1 ? "s" : ""}`}
+              </SheetDescription>
             </SheetHeader>
             <div className="relative">
               <Users className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
@@ -1151,21 +1225,28 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                 const isSelected = collab.uid
                   ? tempEquipa.some(m => m.uid === collab.uid)
                   : tempEquipa.some(m => m.nome === collab.nome)
+                const initials = collab.nome.split(" ").filter(Boolean).slice(0, 2).map((w: string) => w[0].toUpperCase()).join("")
+                const colors = ["bg-blue-500","bg-emerald-500","bg-violet-500","bg-orange-500","bg-pink-500","bg-teal-500"]
+                const colorIdx = collab.nome.charCodeAt(0) % colors.length
                 return (
                   <button
                     key={collab.nome}
                     type="button"
                     onClick={() => toggleTempMember(collab)}
-                    className={`w-full text-left px-5 py-3.5 flex justify-between items-center transition-colors border-b border-border/10 last:border-0 ${
-                      isSelected ? "bg-primary/5 text-primary font-semibold" : "hover:bg-muted/25 text-foreground"
+                    className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-all border-b border-border/10 last:border-0 press-effect ${
+                      isSelected ? "bg-primary/6" : "hover:bg-muted/30"
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm">{collab.nome}</span>
-                      {collab.isLegacy && <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">(manual)</span>}
+                    {/* Avatar */}
+                    <div className={`w-9 h-9 rounded-xl shrink-0 flex items-center justify-center text-white text-xs font-bold ${colors[colorIdx]} ${isSelected ? "ring-2 ring-primary/40 ring-offset-1" : ""} transition-all`}>
+                      {initials || "?"}
                     </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? "bg-primary border-primary" : "border-border"}`}>
-                      {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
+                    <div className="flex-1 min-w-0">
+                      <span className={`text-sm font-medium ${isSelected ? "text-primary font-semibold" : "text-foreground"}`}>{collab.nome}</span>
+                      {collab.isLegacy && <span className="block text-[10px] text-amber-600 dark:text-amber-400 font-medium">Adicionado manualmente</span>}
+                    </div>
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${isSelected ? "bg-primary border-primary shadow-sm" : "border-border/60"}`}>
+                      {isSelected && <Check className="h-3.5 w-3.5 text-primary-foreground" />}
                     </div>
                   </button>
                 )

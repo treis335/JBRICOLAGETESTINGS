@@ -383,67 +383,72 @@ export function FinanceiroView() {
           </button>
 
           {showForm && (
-            <div className="px-5 pb-5 pt-1 border-t bg-muted/20 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3">
+            <div className="px-4 pb-5 pt-3 border-t border-border/30 bg-muted/10 space-y-3 animate-fade-in">
+              {/* Método — 3 quick buttons */}
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Método</Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(["MBWay", "Dinheiro", "Transferência"] as const).map(m => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setNewPaymentMetodo(m)}
+                      className={`py-2.5 rounded-xl text-xs font-bold transition-all press-effect border ${
+                        newPaymentMetodo === m
+                          ? "bg-primary/10 border-primary/30 text-primary shadow-sm"
+                          : "bg-background border-border/40 text-muted-foreground hover:bg-muted/50"
+                      }`}
+                    >
+                      {m}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Data do pagamento</Label>
-                  <div className="relative">
-                    <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                    <Input
-                      type="date"
-                      value={newPaymentDate}
-                      onChange={(e) => setNewPaymentDate(e.target.value)}
-                      className="pl-10 h-10"
-                    />
-                  </div>
+                  <Label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Data</Label>
+                  <Input
+                    type="date"
+                    value={newPaymentDate}
+                    onChange={(e) => setNewPaymentDate(e.target.value)}
+                    className="h-11 rounded-xl border-border/45 bg-background text-sm"
+                  />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Valor (€)</Label>
+                  <Label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Valor</Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium pointer-events-none">€</span>
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold pointer-events-none">€</span>
                     <Input
                       type="number"
                       step="0.01"
                       min="0"
-                      placeholder="0.00"
+                      placeholder="0,00"
                       value={newPaymentValor}
                       onChange={(e) => setNewPaymentValor(e.target.value)}
-                      className="pl-7 h-10 text-base font-semibold"
+                      className="pl-8 h-11 text-base font-bold rounded-xl border-border/45 bg-background"
                     />
                   </div>
-                  {/* Quick fill */}
-                  {saldoEfetivoPeriodo > 0 && (
-                    <button
-                      onClick={() => setNewPaymentValor(saldoEfetivoPeriodo.toFixed(2))}
-                      className="text-[11px] text-emerald-600 hover:text-emerald-700 underline underline-offset-2"
-                    >
-                      Preencher com valor pendente ({formatCurrency(saldoEfetivoPeriodo)})
-                    </button>
-                  )}
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Método de pagamento</Label>
-                <Select value={newPaymentMetodo} onValueChange={(v) => setNewPaymentMetodo(v as PaymentMethod)}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="MBWay">MBWay</SelectItem>
-                    <SelectItem value="Dinheiro">Dinheiro</SelectItem>
-                    <SelectItem value="Transferência">Transferência</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Quick fill */}
+              {saldoEfetivoPeriodo > 0 && (
+                <button
+                  onClick={() => setNewPaymentValor(saldoEfetivoPeriodo.toFixed(2))}
+                  className="w-full text-[11px] text-emerald-600 hover:text-emerald-700 font-semibold py-2 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-all text-left"
+                >
+                  ⚡ Preencher com valor pendente: {formatCurrency(saldoEfetivoPeriodo)}
+                </button>
+              )}
 
               <div className="flex gap-2 pt-1">
-                <Button variant="outline" className="flex-1 h-10" onClick={() => setShowForm(false)}>
+                <Button variant="outline" className="flex-1 h-11 rounded-xl border-border/45" onClick={() => setShowForm(false)}>
                   Cancelar
                 </Button>
                 <Button
                   onClick={handleAddPayment}
-                  className="flex-1 h-10 bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="flex-1 h-11 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold shadow-lg shadow-emerald-600/20 press-effect"
                 >
                   <Plus className="h-4 w-4 mr-1.5" />
                   Confirmar
