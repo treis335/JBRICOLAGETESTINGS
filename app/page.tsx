@@ -6,7 +6,6 @@ import { useWorkTracker } from "@/lib/work-tracker-context"
 
 import { CalendarView } from "@/components/calendar-view"
 import { DayEntryForm } from "@/components/day-entry-form"
-import { ReportsView } from "@/components/reports-view"
 import { SettingsView } from "@/components/settings-view"
 import { FinanceiroView } from "@/components/financeiro-view"
 import { BottomNav, type TabType } from "@/components/bottom-nav"
@@ -107,9 +106,6 @@ function AppContent() {
       <main className="flex-1 pb-16">
         <TabPane active={activeTab === "calendar"}>
           <CalendarView onSelectDate={handleSelectDate} onAddToday={handleAddToday} />
-        </TabPane>
-        <TabPane active={activeTab === "reports"}>
-          <ReportsView />
         </TabPane>
         <TabPane active={activeTab === "financeiro"}>
           <FinanceiroView />

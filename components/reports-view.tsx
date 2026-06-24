@@ -22,11 +22,11 @@ import { getNomesColaboradores } from "@/lib/colaboradores"
 
 type Period = "daily" | "weekly" | "monthly"
 
-export function ReportsView() {
+export function ReportsView({ initialDate }: { initialDate?: Date } = {}) {
   const { data, paidDates } = useWorkTracker()
   const { user } = useAuth()
   const [period, setPeriod] = useState<Period>("weekly")
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [currentDate, setCurrentDate] = useState(initialDate ?? new Date())
   const [username, setUsername] = useState<string>("Colaborador")
 
   // Busca o username do Firestore (campo gravado pelo AuthProvider)
