@@ -4,9 +4,9 @@ import { readFileSync } from "fs"
 import { resolve, dirname } from "path"
 import { fileURLToPath } from "url"
 
-// ── Lê as env vars do .env.local ─────────────────────────────────────────────
+// ── Lê as env vars do .env ─────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const envPath = resolve(__dirname, "../.env.local")
+const envPath = resolve(__dirname, "../.env")
 
 let envVars = {}
 try {
@@ -20,9 +20,9 @@ try {
     const value = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "")
     envVars[key] = value
   })
-  console.log("✅ .env.local carregado com sucesso")
+  console.log("✅ .env carregado com sucesso")
 } catch (err) {
-  console.error("❌ Não foi possível ler .env.local:", err.message)
+  console.error("❌ Não foi possível ler .env:", err.message)
   process.exit(1)
 }
 
@@ -39,7 +39,7 @@ const firebaseConfig = {
 // Valida que temos as keys mínimas
 const missing = Object.entries(firebaseConfig).filter(([, v]) => !v).map(([k]) => k)
 if (missing.length > 0) {
-  console.error("❌ Faltam estas variáveis no .env.local:", missing.join(", "))
+  console.error("❌ Faltam estas variáveis no .env:", missing.join(", "))
   process.exit(1)
 }
 

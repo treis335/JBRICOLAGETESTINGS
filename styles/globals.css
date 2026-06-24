@@ -123,3 +123,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ── Cursor mãozinha em elementos clicáveis ──────────────────────────────── */
+button,
+[role="button"],
+a,
+label[for],
+select,
+input[type="checkbox"],
+input[type="radio"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+input[type="file"],
+[tabindex]:not([tabindex="-1"]),
+summary {
+  cursor: pointer;
+}
