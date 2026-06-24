@@ -645,20 +645,20 @@ export function ReportsView() {
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <Button
                   onClick={exportPDF}
-                  className="w-full h-12 md:h-14 text-base font-semibold bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 shadow-md"
+                  className="w-full h-12 md:h-13 text-sm font-bold bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 shadow-md rounded-2xl press-effect gap-2"
                   size="lg"
                 >
-                  <FileDown className="h-5 w-5 mr-2" />
+                  <FileDown className="h-4 w-4" />
                   Exportar Relatório PDF
                 </Button>
 
                 <Button
                   onClick={exportMapaMensal}
                   variant="outline"
-                  className="w-full h-12 md:h-14 text-base font-semibold border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-500 dark:hover:bg-emerald-950/30 shadow-md"
+                  className="w-full h-12 md:h-13 text-sm font-bold border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-500 dark:hover:bg-emerald-950/30 shadow-md rounded-2xl press-effect gap-2"
                   size="lg"
                 >
-                  <CalendarRange className="h-5 w-5 mr-2" />
+                  <CalendarRange className="h-4 w-4" />
                   Mapa de Horas PDF
                 </Button>
               </div>
@@ -688,25 +688,25 @@ function EntryCard({
   const valor = totalHoras * taxa
 
   return (
-    <Card className="overflow-hidden border border-border/70 bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
-      <div className="flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 bg-muted/30 border-b border-border/50">
-        <p className="text-sm md:text-base font-semibold capitalize">{formatDate(entry.date, false)}</p>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-          <Badge variant="secondary" className="font-bold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950/40 border-0 text-xs">
+    <Card className="overflow-hidden border border-border/60 bg-card shadow-sm hover:shadow-md hover:border-border transition-all duration-200 rounded-2xl">
+      <div className="flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 bg-muted/20 border-b border-border/40">
+        <p className="text-sm md:text-base font-bold capitalize">{formatDate(entry.date, false)}</p>
+        <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+          <Badge variant="secondary" className="font-bold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950/40 border-0 text-xs rounded-lg">
             {totalHoras}h
           </Badge>
           {entry.taxaHoraria && entry.taxaHoraria !== defaultTaxaHoraria && (
-            <Badge variant="outline" className="text-xs text-muted-foreground border-dashed">
+            <Badge variant="outline" className="text-xs text-muted-foreground border-dashed rounded-lg">
               {entry.taxaHoraria}€/h
             </Badge>
           )}
-          <Badge variant="secondary" className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/40 border-0 text-xs">
+          <Badge variant="secondary" className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/40 border-0 text-xs rounded-lg">
             {formatCurrency(valor)}
           </Badge>
         </div>
       </div>
 
-      <div className="divide-y divide-border/30">
+      <div className="divide-y divide-border/20">
         {hasServices ? (
           entry.services!.map((s, idx) => (
             <div key={s.id || idx} className="px-4 md:px-5 py-3 md:py-3.5 space-y-1.5">
@@ -715,7 +715,7 @@ function EntryCard({
                   <Hammer className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0" />
                   <span className="text-sm font-semibold truncate">{s.obraNome}</span>
                   {s.totalHoras != null && s.totalHoras > 0 && (
-                    <Badge variant="outline" className="ml-auto text-xs shrink-0 font-medium">{s.totalHoras}h</Badge>
+                    <Badge variant="outline" className="ml-auto text-xs shrink-0 font-medium rounded-lg">{s.totalHoras}h</Badge>
                   )}
                 </div>
               )}

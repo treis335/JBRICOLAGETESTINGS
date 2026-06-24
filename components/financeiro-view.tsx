@@ -28,7 +28,7 @@ import {
 import {
   Trash2, Plus, TrendingUp, TrendingDown, AlertCircle,
   CheckCircle2, Clock, CreditCard, Wallet, ArrowUpDown,
-  CalendarDays, ChevronDown, ChevronUp,
+  CalendarDays, ChevronDown,
 } from "lucide-react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
 import type { PaymentMethod } from "@/lib/types"
@@ -199,8 +199,8 @@ export function FinanceiroView() {
 
         {/* ── Page Title ── */}
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
-            <TrendingUp className="h-6 w-6 text-emerald-600" />
+          <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 shadow-sm">
+            <TrendingUp className="h-5 w-5 text-emerald-600" />
           </div>
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-tight">Financeiro</h1>
@@ -363,13 +363,13 @@ export function FinanceiroView() {
         </div>
 
         {/* ── Register Payment — Collapsible ── */}
-        <div className="rounded-xl border overflow-hidden">
+        <div className="rounded-2xl border border-border/60 overflow-hidden shadow-sm">
           <button
             onClick={() => setShowForm(v => !v)}
-            className="w-full flex items-center justify-between px-5 py-4 hover:bg-muted/40 transition-colors text-left"
+            className="w-full flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-all duration-200 text-left press-effect"
           >
             <div className="flex items-center gap-3">
-              <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/40 rounded-lg">
+              <div className="p-2 bg-emerald-100 dark:bg-emerald-900/40 rounded-xl">
                 <Plus className="h-4 w-4 text-emerald-600" />
               </div>
               <div>
@@ -377,10 +377,9 @@ export function FinanceiroView() {
                 <p className="text-xs text-muted-foreground">Adicionar novo recebimento</p>
               </div>
             </div>
-            {showForm
-              ? <ChevronUp className="h-4 w-4 text-muted-foreground" />
-              : <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            }
+            <div className={`transition-transform duration-200 ${showForm ? "rotate-180" : ""}`}>
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            </div>
           </button>
 
           {showForm && (
@@ -471,40 +470,43 @@ export function FinanceiroView() {
           </div>
 
           {pagamentosFiltrados.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 rounded-xl border border-dashed text-center">
-              <CreditCard className="h-8 w-8 text-muted-foreground/40 mb-2" />
-              <p className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-center justify-center py-14 rounded-2xl border border-dashed border-border/60 text-center bg-muted/10">
+              <div className="w-14 h-14 rounded-2xl bg-muted/50 border border-border/60 flex items-center justify-center mb-4">
+                <CreditCard className="h-6 w-6 text-muted-foreground/40" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground/70">
                 {filtroMes !== "todos" || filtroAno !== "todos"
                   ? "Nenhum pagamento neste período"
                   : "Ainda não foram registados pagamentos"}
               </p>
               <button
                 onClick={() => setShowForm(true)}
-                className="text-xs text-primary underline underline-offset-2 mt-2"
+                className="text-xs text-primary hover:text-primary/80 underline underline-offset-2 mt-3 font-medium transition-colors"
               >
                 Registar primeiro pagamento
               </button>
             </div>
           ) : (
             <div className="space-y-2">
-              {pagamentosFiltrados.map((payment) => (
+              {pagamentosFiltrados.map((payment, idx) => (
                 <div
                   key={payment.id}
-                  className="group flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border bg-card hover:bg-muted/30 transition-colors"
+                  className="group flex items-center justify-between gap-3 px-4 py-3.5 rounded-2xl border border-border/60 bg-card hover:bg-muted/20 hover:border-border hover:shadow-sm transition-all duration-200 animate-fade-in"
+                  style={{ animationDelay: `${idx * 40}ms` }}
                 >
                   {/* Left: amount + date */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 shrink-0">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 shrink-0 shadow-sm">
                       {metodoIcon[payment.metodo] ?? <CreditCard className="h-3.5 w-3.5" />}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-base leading-none">{formatCurrency(payment.valor)}</p>
-                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <p className="font-bold text-base leading-none">{formatCurrency(payment.valor)}</p>
+                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                         <span className="text-xs text-muted-foreground">{formatDate(payment.date)}</span>
-                        <span className="text-xs text-muted-foreground">·</span>
-                        <span className="text-xs text-muted-foreground">{payment.metodo}</span>
+                        <span className="text-muted-foreground/40">·</span>
+                        <span className="text-xs font-medium text-muted-foreground">{payment.metodo}</span>
                         {payment.source === "admin" && (
-                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/50">
                             Admin
                           </span>
                         )}
