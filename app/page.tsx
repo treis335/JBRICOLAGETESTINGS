@@ -10,7 +10,50 @@ import { ReportsView } from "@/components/reports-view"
 import { SettingsView } from "@/components/settings-view"
 import { FinanceiroView } from "@/components/financeiro-view"
 import { BottomNav, type TabType } from "@/components/bottom-nav"
-import { Spinner } from "@/components/ui/spinner"
+
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-6 animate-fade-in">
+        {/* Logo mark */}
+        <div className="relative">
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="20" width="24" height="4" rx="2" fill="currentColor" className="text-primary" />
+              <rect x="8" y="14" width="16" height="4" rx="2" fill="currentColor" className="text-primary opacity-70" />
+              <rect x="12" y="8" width="8" height="4" rx="2" fill="currentColor" className="text-primary opacity-40" />
+            </svg>
+          </div>
+          {/* Spinning ring */}
+          <svg
+            className="absolute -inset-2 animate-spin-slow"
+            width="80" height="80" viewBox="0 0 80 80"
+            fill="none" xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="40" cy="40" r="36" stroke="currentColor"
+              strokeWidth="2" strokeLinecap="round"
+              strokeDasharray="56 170"
+              className="text-primary/30"
+            />
+          </svg>
+        </div>
+
+        {/* Text */}
+        <div className="text-center animate-fade-in delay-100">
+          <p className="text-sm font-semibold text-foreground/80 tracking-wide">JBRICOLAGE</p>
+          <p className="text-xs text-muted-foreground/60 mt-1 animate-fade-in delay-200">A carregar dados…</p>
+        </div>
+
+        {/* Skeleton bars */}
+        <div className="flex flex-col gap-2 w-48 animate-fade-in delay-150">
+          <div className="skeleton h-2 w-full" />
+          <div className="skeleton h-2 w-3/4" />
+          <div className="skeleton h-2 w-5/6" />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<TabType>("calendar")
@@ -34,29 +77,20 @@ function AppContent() {
     setSelectedDate(null)
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <Spinner className="h-8 w-8 text-primary" />
-          <p className="text-muted-foreground text-sm">A carregar...</p>
-        </div>
-      </div>
-    )
-  }
+  if (isLoading) return <LoadingScreen />
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <main className="flex-1 pb-16">
+      <main className="flex-1 pb-16 animate-fade-in">
         {activeTab === "calendar" && (
           <CalendarView
             onSelectDate={handleSelectDate}
             onAddToday={handleAddToday}
           />
         )}
-        {activeTab === "reports" && <ReportsView />}
+        {activeTab === "reports"    && <ReportsView />}
         {activeTab === "financeiro" && <FinanceiroView />}
-        {activeTab === "settings" && <SettingsView />}
+        {activeTab === "settings"   && <SettingsView />}
       </main>
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />

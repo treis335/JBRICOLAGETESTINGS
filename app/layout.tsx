@@ -18,17 +18,26 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#3b5998",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)",  color: "#0f0f14" },
+  ],
+  viewportFit: "cover",
 }
 
 export const metadata: Metadata = {
   title: "JBricolage - Horas",
   description: "App para registo de horas, equipa e materiais",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "JBricolage",
+  },
   icons: {
     icon: [
       { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
-      { url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: dark)" },
+      { url: "/icon-dark-32x32.png",  media: "(prefers-color-scheme: dark)"  },
       { url: "/icon.svg", type: "image/svg+xml" },
     ],
     apple: "/apple-icon.png",
@@ -41,8 +50,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-PT">
-      {/* Adicione aqui o <head> com o CSS do Leaflet via CDN */}
+    <html lang="pt-PT" suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"
@@ -50,6 +58,9 @@ export default function RootLayout({
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
+        {/* Safe area support */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
 
       <body className={`${geist.className} antialiased`}>

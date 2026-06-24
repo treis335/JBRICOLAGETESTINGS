@@ -734,7 +734,7 @@ export function SettingsView() {
       <input id="foto-perfil-selfie" type="file" accept="image/*" capture="user" className="sr-only" onChange={handleFileChosen} />
       <input id="foto-perfil-galeria" type="file" accept="image/*" className="sr-only" onChange={handleFileChosen} />
 
-      <ScrollArea className="h-full">
+      <ScrollArea className="h-full animate-fade-in">
         <div className="min-h-full bg-gradient-to-b from-slate-50 via-white to-slate-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
           <div className="pb-28 md:pb-16 w-full max-w-xl mx-auto">
 

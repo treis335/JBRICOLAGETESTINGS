@@ -492,10 +492,11 @@ export function ReportsView() {
   const hasEntries = filteredEntries.length > 0
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex flex-col h-screen bg-background animate-fade-in">
 
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b shadow-sm">
+      <div className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60"
+        style={{ WebkitBackdropFilter: "blur(20px)" }}>
         <div className="px-4 pt-3 pb-2 md:px-8">
           <Tabs value={period} onValueChange={(v) => setPeriod(v as Period)}>
             <TabsList className="w-full grid grid-cols-3 h-9 md:w-auto md:inline-grid">
@@ -507,11 +508,11 @@ export function ReportsView() {
         </div>
 
         <div className="flex items-center justify-between px-3 py-2 md:px-7">
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" onClick={() => navigate("prev")}>
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl press-effect" onClick={() => navigate("prev")}>
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <p className="text-sm font-semibold text-center capitalize flex-1 px-3 truncate">{rangeLabel}</p>
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" onClick={() => navigate("next")}>
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl press-effect" onClick={() => navigate("next")}>
             <ChevronRight className="h-5 w-5" />
           </Button>
         </div>
