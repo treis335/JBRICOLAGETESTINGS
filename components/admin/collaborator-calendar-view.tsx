@@ -6,11 +6,12 @@ import { useState, useMemo } from "react"
 import {
   ChevronLeft, ChevronRight, Calendar, Clock, Euro,
   TrendingUp, Zap, Users, Package, Briefcase,
-  HardHat, X, CheckCircle2,
+  HardHat, X, CheckCircle2, FileText,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { formatLocalDate } from "@/lib/date-utils"
+import { CollaboratorReportsView } from "@/components/admin/collaborator-reports-view"
 
 interface CollaboratorCalendarViewProps {
   collaboratorId: string
@@ -293,6 +294,7 @@ export function CollaboratorCalendarView({
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   const [selectedEntry, setSelectedEntry] = useState<any>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [reportModalOpen, setReportModalOpen] = useState(false)
 
   const entryMap = useMemo(() => {
     const map = new Map<string, any>()
@@ -466,6 +468,13 @@ export function CollaboratorCalendarView({
           <button onClick={() => handleMonthChange("next")} className="w-9 h-9 flex items-center justify-center rounded-xl border bg-card hover:bg-muted transition-colors">
             <ChevronRight className="h-4 w-4" />
           </button>
+          <button
+            onClick={() => setReportModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 h-9 rounded-xl border bg-card hover:bg-muted transition-colors text-xs font-medium text-foreground"
+          >
+            <FileText className="h-3.5 w-3.5" />
+            Relatório
+          </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -515,7 +524,14 @@ export function CollaboratorCalendarView({
         <div className="flex-1 min-w-0 space-y-2.5">
           <div className="flex items-center justify-between mb-1">
             <h2 className="text-sm font-semibold capitalize">{monthLabel}</h2>
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setReportModalOpen(true)}
+                className="flex items-center gap-1 px-2 h-6 rounded-md hover:bg-muted transition-colors text-muted-foreground text-[11px] font-medium"
+              >
+                <FileText className="h-3 w-3" />
+                Relatório
+              </button>
               <button onClick={() => handleMonthChange("prev")} className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-muted-foreground">
                 <ChevronLeft className="h-3.5 w-3.5" />
               </button>
@@ -560,7 +576,53 @@ export function CollaboratorCalendarView({
         </div>
       </div>
 
-      {/* ── Dialog ── */}
+      {/* ── Report Modal ── */}
+      <Dialog open={reportModalOpen} onOpenChange={setReportModalOpen}>
+        <DialogContent
+          className={cn(
+            "p-0 gap-0 border-0 shadow-2xl overflow-hidden",
+            "max-sm:fixed max-sm:inset-0 max-sm:w-full max-sm:h-full",
+            "max-sm:max-w-full max-sm:max-h-full",
+            "max-sm:rounded-none max-sm:translate-x-0 max-sm:translate-y-0",
+            "sm:w-[680px] sm:max-w-[95vw] sm:max-h-[90dvh] sm:rounded-3xl",
+            "flex flex-col",
+            "[&>button]:hidden",
+          )}
+        >
+          <DialogTitle className="sr-only">Relatório — {collaboratorName}</DialogTitle>
+          <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border/30 shrink-0">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                <FileText className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-bold">Relatórios</p>
+                <p className="text-xs text-muted-foreground">{collaboratorName}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setReportModalOpen(false)}
+              className="w-8 h-8 rounded-xl hover:bg-muted flex items-center justify-center transition-colors"
+            >
+              <X className="h-4 w-4 text-muted-foreground" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto overscroll-contain p-5">
+            <CollaboratorReportsView
+              collaborator={{
+                id: collaboratorId,
+                name: collaboratorName,
+                email: "",
+                currentRate,
+                entries,
+              }}
+              initialDate={currentMonth}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Day Detail Dialog ── */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent
           className={cn(

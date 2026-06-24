@@ -20,6 +20,7 @@ interface CollaboratorReportsViewProps {
     currentRate: number
     entries: any[]
   }
+  initialDate?: Date
 }
 
 type Period = "daily" | "weekly" | "monthly"
@@ -39,9 +40,9 @@ const formatCurrency = (value: number) =>
 const formatDateWithWeekday = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("pt-PT", { weekday: "short", day: "2-digit", month: "2-digit" })
 
-export function CollaboratorReportsView({ collaborator }: CollaboratorReportsViewProps) {
+export function CollaboratorReportsView({ collaborator, initialDate }: CollaboratorReportsViewProps) {
   const [period, setPeriod] = useState<Period>("monthly")
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [currentDate, setCurrentDate] = useState(initialDate ?? new Date())
 
   const { startDate, endDate, rangeLabel } = useMemo(() => {
     const today = new Date(currentDate)

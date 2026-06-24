@@ -22,7 +22,6 @@ import { uploadFotoObra } from "@/lib/obras-service"
 import { cn } from "@/lib/utils"
 
 import { CollaboratorCalendarView }  from "@/components/admin/collaborator-calendar-view"
-import { CollaboratorReportsView }   from "@/components/admin/collaborator-reports-view"
 import { CollaboratorOverview }      from "@/components/admin/collaborator-overview"
 import { CollaboratorFinanceView }   from "@/components/admin/collaborator-finance-view"
 import type { RateHistoryEntry }     from "@/components/admin/collaborator-rate-manager"
@@ -752,7 +751,6 @@ export default function CollaboratorDetailPage() {
     { value: "overview", label: "Visão Geral", Icon: User },
     { value: "finance",  label: "Financeiro",  Icon: Euro },
     { value: "calendar", label: "Calendário",  Icon: CalendarIcon },
-    { value: "reports",  label: "Relatórios",  Icon: FileText },
   ]
 
   return (
@@ -886,7 +884,7 @@ export default function CollaboratorDetailPage() {
             {/* ── Tabs ── */}
             <div className="px-4 pb-10 md:px-8">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="w-full sm:w-auto grid grid-cols-4 sm:inline-flex h-11 rounded-xl bg-muted/50 p-1 mb-6 gap-0.5">
+                <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex h-11 rounded-xl bg-muted/50 p-1 mb-6 gap-0.5">
                   {tabs.map(({ value, label, Icon }) => (
                     <TabsTrigger
                       key={value}
@@ -930,9 +928,6 @@ export default function CollaboratorDetailPage() {
                   />
                 </TabsContent>
 
-                <TabsContent value="reports" className="focus-visible:outline-none mt-0">
-                  <CollaboratorReportsView collaborator={collaborator} />
-                </TabsContent>
               </Tabs>
             </div>
 
