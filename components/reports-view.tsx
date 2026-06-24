@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
-import { fmt } from "@/lib/utils"
   Clock, ChevronLeft, ChevronRight, FileDown,
   TrendingUp, Users, Package, CalendarDays,
   Hammer, Euro, BarChart3, CalendarRange,
@@ -18,8 +17,9 @@ import { useWorkTracker } from "@/lib/work-tracker-context"
 import { useAuth } from "@/lib/AuthProvider"
 import { db } from "@/lib/firebase"
 import { doc, getDoc } from "firebase/firestore"
-import {  calculateHours } from "@/lib/types"
+import { type DayEntry, calculateHours } from "@/lib/types"
 import { getNomesColaboradores } from "@/lib/colaboradores"
+import { fmt } from "@/lib/utils"
 
 type Period = "daily" | "weekly" | "monthly"
 

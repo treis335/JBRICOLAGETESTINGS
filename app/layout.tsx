@@ -10,8 +10,8 @@ import { Header } from "@/components/header"
 import { WorkTrackerProvider } from "@/lib/work-tracker-context"
 import { AuthProvider } from "@/lib/AuthProvider"
 
-const geist = Geist({ subsets: ["latin"] })
-const geistMono = Geist_Mono({ subsets: ["latin"] })
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" })
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" })
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -44,11 +44,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-PT" suppressHydrationWarning>
       <head>
@@ -58,16 +54,20 @@ export default function RootLayout({
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
-        {/* Safe area support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
-
       <body className={`${geist.className} antialiased`}>
         <AuthProvider>
           <WorkTrackerProvider>
-            <Header />
-            <div className="pt-14">{children}</div>
+            {/* Header: mobile only (lg+ usa a sidebar) */}
+            <div className="lg:hidden">
+              <Header />
+            </div>
+            {/* Top padding only on mobile (header height) */}
+            <div className="lg:pt-0 pt-16">
+              {children}
+            </div>
             <Analytics />
           </WorkTrackerProvider>
         </AuthProvider>

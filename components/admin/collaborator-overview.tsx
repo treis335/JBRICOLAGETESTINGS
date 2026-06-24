@@ -3,7 +3,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import {  Clock, Briefcase, Mail, AtSign, User, TrendingUp, BarChart2, CalendarDays, ChevronLeft, ChevronRight } from "lucide-react"
-import { CollaboratorRateManager } from "./collaborator-rate-manager"
+import { CollaboratorRateManager, type RateHistoryEntry } from "./collaborator-rate-manager"
 
 const MONTH_NAMES_PT = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",

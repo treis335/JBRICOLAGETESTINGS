@@ -10,7 +10,9 @@ import {
   uploadFotoObra, geocodeMorada, formatMorada,
   getGoogleMapsUrl, getWazeUrl,
   ESTADO_LABELS, ESTADO_COLORS,
+  type Obra, type ObraEstado, type ObraLocalizacao,
 } from "@/lib/obras-service"
+import { fmt as fmtEurUtil } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -1076,7 +1078,7 @@ export function AdminObrasView() {
                     obras={obras}
                     obraAtualId={selectedObra.id}
                     fmtDate={fmtDate}
-                    fmtEur={fmtEur}
+                    fmtEur={fmtEurUtil}
                     onTransferEntry={setTransferTarget}
                   />
                 ) : (

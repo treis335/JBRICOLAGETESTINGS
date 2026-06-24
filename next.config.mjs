@@ -12,18 +12,13 @@ const withPWA = withPWAInit({
         handler: 'CacheFirst',
         options: {
           cacheName: 'images',
-          expiration: {
-            maxEntries: 100,
-            maxAgeSeconds: 30 * 24 * 60 * 60,
-          },
+          expiration: { maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 },
         },
       },
       {
         urlPattern: /\.(?:js|css)$/,
         handler: 'StaleWhileRevalidate',
-        options: {
-          cacheName: 'static-resources',
-        },
+        options: { cacheName: 'static-resources' },
       },
     ],
   },
@@ -34,12 +29,13 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // eslint key foi removido — já não é suportado no Next 16
+  // usar em vez disso: next lint --ignore-path ou .eslintignore
   images: {
     unoptimized: true,
   },
+  // Silencia o erro de webpack/turbopack — sem webpack config customizada
+  turbopack: {},
 };
 
 export default withPWA(nextConfig);

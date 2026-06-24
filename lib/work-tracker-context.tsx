@@ -132,10 +132,6 @@ export function WorkTrackerProvider({ children }: { children: ReactNode }) {
         }
 
         setData(finalData)
-          entries: finalData.entries.length,
-          payments: finalData.payments.length,
-          userId: user.uid,
-        })
       } catch (err) {
         console.error("❌ Erro ao carregar dados Firebase:", err)
         setData(defaultAppData)

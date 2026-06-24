@@ -22,7 +22,7 @@ const tabs = [
 
 export function AdminBottomNav({ activeTab, onTabChange }: AdminBottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
       {/* Glassmorphism backdrop */}
       <div
         className="absolute inset-0 bg-card/85 backdrop-blur-xl border-t border-border/50"

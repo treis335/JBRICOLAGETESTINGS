@@ -22,7 +22,7 @@ import {
   Clock, Hammer, Search, HardHat, MapPin, AlertTriangle, ChevronRight,
 } from "lucide-react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
-import {  calculateHours } from "@/lib/types"
+import { type DayEntry, calculateHours } from "@/lib/types"
 import {
   AlertDialog,
   AlertDialogAction,

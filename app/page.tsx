@@ -3,9 +3,9 @@
 
 import { useState, useEffect } from "react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
-
 import { CalendarView } from "@/components/calendar-view"
 import { BottomNav, type TabType } from "@/components/bottom-nav"
+import { SideNav } from "@/components/side-nav"
 import dynamic from "next/dynamic"
 
 const DayEntryForm   = dynamic(() => import("@/components/day-entry-form").then(m => ({ default: m.DayEntryForm })))
@@ -16,36 +16,23 @@ function LoadingScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-6 animate-fade-in">
-        {/* Logo mark */}
         <div className="relative">
           <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg shadow-primary/10">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
               <rect x="4" y="20" width="24" height="4" rx="2" fill="currentColor" className="text-primary" />
               <rect x="8" y="14" width="16" height="4" rx="2" fill="currentColor" className="text-primary opacity-70" />
               <rect x="12" y="8" width="8" height="4" rx="2" fill="currentColor" className="text-primary opacity-40" />
             </svg>
           </div>
-          {/* Spinning ring */}
-          <svg
-            className="absolute -inset-2 animate-spin-slow"
-            width="80" height="80" viewBox="0 0 80 80"
-            fill="none" xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="40" cy="40" r="36" stroke="currentColor"
-              strokeWidth="2" strokeLinecap="round"
-              strokeDasharray="56 170"
-              className="text-primary/30"
-            />
+          <svg className="absolute -inset-2 animate-spin-smooth" width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="2"
+              strokeLinecap="round" strokeDasharray="56 170" className="text-primary/30" />
           </svg>
         </div>
-
-        {/* Brand */}
         <div className="text-center animate-fade-in delay-100">
           <p className="text-sm font-black tracking-widest text-foreground/80 uppercase">JBRICOLAGE</p>
-          <p className="text-xs text-muted-foreground/50 mt-1 animate-fade-in delay-200">A carregar dados…</p>
+          <p className="text-xs text-muted-foreground/50 mt-1">A carregar dados…</p>
         </div>
-
-        {/* Skeleton bars */}
         <div className="flex flex-col gap-2 w-48 animate-fade-in delay-150">
           <div className="skeleton h-2 w-full" />
           <div className="skeleton h-2 w-3/4" />
@@ -56,24 +43,16 @@ function LoadingScreen() {
   )
 }
 
-// Animated tab wrapper — componentes mantêm-se montados (sem re-fetch ao trocar tab)
+// Keeps tabs mounted after first visit (no re-fetch)
 function TabPane({ active, children }: { active: boolean; children: React.ReactNode }) {
   const [everActive, setEverActive] = useState(active)
-
-  useEffect(() => {
-    if (active && !everActive) setEverActive(true)
-  }, [active, everActive])
-
-  // Não monta até ser visitado pela primeira vez
+  useEffect(() => { if (active) setEverActive(true) }, [active])
   if (!everActive) return null
-
   return (
-    <div
-      style={{
-        display: active ? undefined : "none",
-        animation: active ? "fade-in-up 0.25s cubic-bezier(0.16,1,0.3,1) both" : "none",
-      }}
-    >
+    <div style={{
+      display: active ? undefined : "none",
+      animation: active ? "fade-in-up 0.25s cubic-bezier(0.16,1,0.3,1) both" : "none",
+    }}>
       {children}
     </div>
   )
@@ -83,47 +62,39 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState<TabType>("calendar")
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [formOpen, setFormOpen] = useState(false)
-
   const { isLoading } = useWorkTracker()
 
-  const handleSelectDate = (date: Date) => {
-    setSelectedDate(date)
-    setFormOpen(true)
-  }
-
-  const handleAddToday = () => {
-    setSelectedDate(new Date())
-    setFormOpen(true)
-  }
-
-  const handleCloseForm = () => {
-    setFormOpen(false)
-    setSelectedDate(null)
-  }
+  const handleSelectDate = (date: Date) => { setSelectedDate(date); setFormOpen(true) }
+  const handleAddToday   = () => { setSelectedDate(new Date()); setFormOpen(true) }
+  const handleCloseForm  = () => { setFormOpen(false); setSelectedDate(null) }
 
   if (isLoading) return <LoadingScreen />
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <main className="flex-1 pb-16">
-        <TabPane active={activeTab === "calendar"}>
-          <CalendarView onSelectDate={handleSelectDate} onAddToday={handleAddToday} />
-        </TabPane>
-        <TabPane active={activeTab === "financeiro"}>
-          <FinanceiroView />
-        </TabPane>
-        <TabPane active={activeTab === "settings"}>
-          <SettingsView />
-        </TabPane>
-      </main>
+    <div className="min-h-screen bg-background flex">
 
+      {/* Desktop Sidebar (≥ lg) */}
+      <SideNav activeTab={activeTab} onTabChange={setActiveTab} onAddToday={handleAddToday} />
+
+      {/* Main content */}
+      <div className="flex-1 min-w-0 lg:pl-64">
+        <main className="flex-1 pb-16 lg:pb-0">
+          <TabPane active={activeTab === "calendar"}>
+            <CalendarView onSelectDate={handleSelectDate} onAddToday={handleAddToday} />
+          </TabPane>
+          <TabPane active={activeTab === "financeiro"}>
+            <FinanceiroView />
+          </TabPane>
+          <TabPane active={activeTab === "settings"}>
+            <SettingsView />
+          </TabPane>
+        </main>
+      </div>
+
+      {/* Mobile Bottom Nav (< lg) */}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <DayEntryForm
-        date={selectedDate}
-        open={formOpen}
-        onClose={handleCloseForm}
-      />
+      <DayEntryForm date={selectedDate} open={formOpen} onClose={handleCloseForm} />
     </div>
   )
 }

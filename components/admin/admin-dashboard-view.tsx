@@ -15,6 +15,13 @@ import { Button } from "@/components/ui/button"
 import { cn, fmt, resolveEntryTaxa } from "@/lib/utils"
 import type { AdminTabType } from "@/components/admin/admin-bottom-nav"
 
+// Extended collaborator with computed month data
+interface CollabWithMonth {
+  _monthHours: number
+  _monthCost: number
+  [key: string]: any
+}
+
 
 
 // ─── Sparkline ────────────────────────────────────────────────────────────────
@@ -211,7 +218,7 @@ function FinanceSummaryCard({
 
 // ─── Collaborator row ─────────────────────────────────────────────────────────
 function CollabRow({ collab, rank, maxHours, onClick }: {
-  collab: import("@/hooks/useCollaborators").Collaborator; rank: number; maxHours: number; onClick: () => void
+  collab: import("@/hooks/useCollaborators").Collaborator & { _monthHours: number; _monthCost: number }; rank: number; maxHours: number; onClick: () => void
 }) {
   const pct = maxHours > 0 ? (collab._monthHours / maxHours) * 100 : 0
   const rankColors = [
