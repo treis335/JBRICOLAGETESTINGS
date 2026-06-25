@@ -622,6 +622,13 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                           />
                         </div>
 
+                        {/* ── Fotos do Serviço ── */}
+                        <ServiceFotos
+                          serviceId={s.id}
+                          fotos={s.fotos ?? []}
+                          onChange={fotos => updateService(s.id, { fotos })}
+                        />
+
                         {/* ── Equipa ── */}
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
@@ -701,15 +708,6 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                   </Tabs>
                 )}
               </div>
-
-              {/* ── Fotos do Serviço ── */}
-              {activeService && (
-                <ServiceFotos
-                  serviceId={activeService.id}
-                  fotos={activeService.fotos ?? []}
-                  onChange={fotos => updateService(activeService.id, { fotos })}
-                />
-              )}
 
               {/* ── Remover serviço ── */}
               {services.length > 1 && activeService && (
