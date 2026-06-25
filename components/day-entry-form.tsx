@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sheet"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import {
-  Plus, Minus, X, Trash2, Users, Check,
+  Plus, Minus, X, Trash2, Users, Check, Loader2,
   Clock, Hammer, Search, HardHat, MapPin, AlertTriangle, ChevronRight,
 } from "lucide-react"
 import { useWorkTracker } from "@/lib/work-tracker-context"
