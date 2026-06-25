@@ -193,13 +193,13 @@ function CollabCard({ f, onOpen, onPay }: {
 
   return (
     <div
-      className={cn("bg-card rounded-2xl border border-border border-l-4 overflow-hidden active:scale-[0.99] transition-transform cursor-pointer", borderColor)}
+      className={cn("bg-card rounded-2xl border border-border border-l-4 overflow-hidden active:scale-[0.99] transition-transform cursor-pointer w-full max-w-full", borderColor)}
       onClick={onOpen}
     >
       <div className="px-3 sm:px-4 py-3 space-y-3">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div className={cn(
               "w-9 h-9 rounded-xl flex items-center justify-center text-[11px] font-bold shrink-0",
               f.overdueAmount > 0 ? "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400" : "bg-primary/10 text-primary"
@@ -222,9 +222,9 @@ function CollabCard({ f, onOpen, onPay }: {
             { label: "Pago mês", value: m.paid > 0 ? fmt(m.paid) : "—", color: "text-emerald-600 dark:text-emerald-400" },
             { label: "Pendente mês", value: m.pending > 0 ? fmt(m.pending) : "—", color: "text-amber-600 dark:text-amber-400" },
           ].map(s => (
-            <div key={s.label} className="bg-muted/40 rounded-xl px-3 py-2.5">
-              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">{s.label}</p>
-              <p className={cn("text-sm font-bold tabular-nums mt-0.5", s.color)}>{s.value}</p>
+            <div key={s.label} className="bg-muted/40 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide truncate">{s.label}</p>
+              <p className={cn("text-sm font-bold tabular-nums mt-0.5 truncate", s.color)}>{s.value}</p>
             </div>
           ))}
         </div>
@@ -782,8 +782,8 @@ export function AdminFinanceView() {
         </div>
 
         {/* Scrollable body */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="px-3 sm:px-4 py-4 space-y-4 pb-24 md:pb-8 max-w-5xl mx-auto w-full">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="px-3 sm:px-4 py-4 space-y-4 pb-24 md:pb-8 max-w-5xl mx-auto w-full min-w-0">
 
             {/* Overdue alert */}
             {kpis.withOverdue > 0 && (
@@ -885,7 +885,7 @@ export function AdminFinanceView() {
             </div>
 
             {/* Mobile: Cards */}
-            <div className="lg:hidden space-y-3">
+            <div className="lg:hidden space-y-3 overflow-x-hidden">
               {filtered.length === 0 ? (
                 <div className="py-16 text-center text-muted-foreground">
                   <Users className="h-8 w-8 mx-auto mb-3 opacity-20" />

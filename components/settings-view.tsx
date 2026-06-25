@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Euro, Info, Download, Upload,
   CheckCircle2, AlertCircle, Share, User, Lock,
@@ -734,8 +733,8 @@ export function SettingsView() {
       <input id="foto-perfil-selfie" type="file" accept="image/*" capture="user" className="sr-only" onChange={handleFileChosen} />
       <input id="foto-perfil-galeria" type="file" accept="image/*" className="sr-only" onChange={handleFileChosen} />
 
-      <ScrollArea className="h-full w-full animate-fade-in">
-        <div className="min-h-full w-full bg-gradient-to-b from-slate-50 via-white to-slate-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
+      <div className="h-full w-full overflow-y-auto overflow-x-hidden animate-fade-in">
+        <div className="min-h-full w-full max-w-full overflow-x-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
           <div className="pb-28 md:pb-16 w-full">
 
             {/* ── Hero Header ── */}
@@ -763,7 +762,7 @@ export function SettingsView() {
               </div>
             </div>
 
-            <div className="space-y-3 px-4 pt-4 pb-2">
+            <div className="space-y-3 px-4 pt-4 pb-2 max-w-full overflow-x-hidden">
 
               {/* ── PERFIL ── */}
               <Section icon={<User className="h-4 w-4" />} gradient="from-blue-500 to-indigo-600" title="Perfil">
@@ -1076,7 +1075,7 @@ export function SettingsView() {
             </div>
           </div>
         </div>
-      </ScrollArea>
+      </div>
     </>
   )
 }
