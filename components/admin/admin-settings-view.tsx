@@ -96,7 +96,7 @@ export function AdminSettingsView() {
   }
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full w-full">
       <div className="p-4 pb-24 md:p-8 md:pb-12 space-y-6 max-w-4xl mx-auto">
 
         {/* ── Header ── */}

@@ -423,7 +423,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
   if (!stats) return null
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full w-full">
       <div className="px-3 sm:px-5 py-4 pb-24 md:py-8 md:pb-12 space-y-6 max-w-7xl mx-auto w-full">
 
         {/* ── Header ── */}

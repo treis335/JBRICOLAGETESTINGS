@@ -340,7 +340,7 @@ function MBwayToggle({
     <div className="px-4 py-4">
       {/* Main toggle row */}
       <div className={cn(
-        "rounded-2xl border p-4 transition-all duration-300",
+        "rounded-2xl border p-3 sm:p-4 transition-all duration-300",
         locked
           ? "bg-red-50/60 dark:bg-red-950/10 border-red-200/50 dark:border-red-800/30"
           : enabled
@@ -507,13 +507,13 @@ function TaxaHorariaCard({ taxa }: { taxa: number }) {
             <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-black mb-2">Taxa atual</p>
             {visible ? (
               <div className="flex items-baseline gap-1.5 animate-in fade-in duration-200">
-                <span className="text-4xl sm:text-5xl font-black tabular-nums tracking-tight">{taxa.toFixed(2)}</span>
+                <span className="text-3xl sm:text-4xl font-black tabular-nums tracking-tight">{taxa.toFixed(2)}</span>
                 <span className="text-xl font-bold text-muted-foreground">€</span>
                 <span className="text-sm text-muted-foreground/60">/hora</span>
               </div>
             ) : (
               <div className="flex items-baseline gap-1.5">
-                <span className="text-4xl sm:text-5xl font-black tabular-nums tracking-widest text-muted-foreground/30 select-none">••••</span>
+                <span className="text-3xl sm:text-4xl font-black tabular-nums tracking-widest text-muted-foreground/30 select-none">••••</span>
                 <span className="text-xl font-bold text-muted-foreground/30">€</span>
               </div>
             )}
@@ -734,9 +734,9 @@ export function SettingsView() {
       <input id="foto-perfil-selfie" type="file" accept="image/*" capture="user" className="sr-only" onChange={handleFileChosen} />
       <input id="foto-perfil-galeria" type="file" accept="image/*" className="sr-only" onChange={handleFileChosen} />
 
-      <ScrollArea className="h-full animate-fade-in">
-        <div className="min-h-full bg-gradient-to-b from-slate-50 via-white to-slate-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
-          <div className="pb-28 md:pb-16 w-full max-w-xl mx-auto min-w-0">
+      <ScrollArea className="h-full w-full animate-fade-in">
+        <div className="min-h-full w-full bg-gradient-to-b from-slate-50 via-white to-slate-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
+          <div className="pb-28 md:pb-16 w-full">
 
             {/* ── Hero Header ── */}
             <div className="relative overflow-hidden w-full">
@@ -756,21 +756,21 @@ export function SettingsView() {
                     <Settings2 className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Definições</h1>
+                    <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">Definições</h1>
                     <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">JBricolage · v1.0</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-3 px-4 sm:px-5 pt-4">
+            <div className="space-y-3 px-4 pt-4 pb-2">
 
               {/* ── PERFIL ── */}
               <Section icon={<User className="h-4 w-4" />} gradient="from-blue-500 to-indigo-600" title="Perfil">
                 {user ? (
                   <>
                     {/* ── Avatar + Info row ── */}
-                    <div className="px-4 py-5 flex items-center gap-4 border-b border-border/15">
+                    <div className="px-4 py-4 flex items-center gap-3 border-b border-border/15">
                       <div className="relative shrink-0">
                         <Avatar fotoUrl={profile.fotoUrl} nome={displayName} size="lg" />
 
@@ -1056,7 +1056,7 @@ export function SettingsView() {
 
                 {syncMessage && (
                   <div className={cn(
-                    "mx-4 mb-4 flex items-start gap-3 px-4 py-3.5 rounded-2xl text-sm border font-medium",
+                    "mx-0 mb-4 flex items-start gap-3 px-4 py-3.5 rounded-2xl text-sm border font-medium",
                     syncSuccess
                       ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/30"
                       : "bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-300 border-red-200/50 dark:border-red-800/30"
