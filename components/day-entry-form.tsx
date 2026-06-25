@@ -136,6 +136,8 @@ function servicesEqual(a: Service[], b: Service[]): boolean {
   if (a.length !== b.length) return false
   return a.every((sa, i) => {
     const sb = b[i]
+    const fotosA = sa.fotos ?? []
+    const fotosB = sb.fotos ?? []
     return (
       sa.obraNome === sb.obraNome &&
       sa.obraId === sb.obraId &&
@@ -144,7 +146,9 @@ function servicesEqual(a: Service[], b: Service[]): boolean {
       sa.equipa.length === sb.equipa.length &&
       sa.equipa.every((e, j) => e === sb.equipa[j]) &&
       sa.materiais.length === sb.materiais.length &&
-      sa.materiais.every((m, j) => m === sb.materiais[j])
+      sa.materiais.every((m, j) => m === sb.materiais[j]) &&
+      fotosA.length === fotosB.length &&
+      fotosA.every((f, j) => f.publicId === fotosB[j]?.publicId)
     )
   })
 }
@@ -286,7 +290,7 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
     )
   }, [isEditing, totalHoras, services])
 
-  const showSaveButton = isEditing ? hasChanges : hasAnyContent
+  const showSaveButton = isUploading || (isEditing ? hasChanges : hasAnyContent)
 
   // ── Team Selector ──
   const colaboradoresFiltrados = useMemo(() => {
