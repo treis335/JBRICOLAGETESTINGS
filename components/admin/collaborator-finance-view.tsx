@@ -393,7 +393,7 @@ export function CollaboratorFinanceView({
   }, [hasMbway, hasTransferencia, mbwayData])
 
   return (
-    <div className="space-y-5 pb-8">
+    <div className="space-y-5 pb-8 overflow-x-hidden min-w-0">
 
       {/* ── MBWay Banner (sempre visível se ativo) ── */}
       {!mbwayLoading && hasMbway && (
@@ -460,15 +460,15 @@ export function CollaboratorFinanceView({
           )}
         </div>
 
-        <div className="grid grid-cols-3 divide-x bg-card">
+        <div className="grid grid-cols-3 divide-x bg-card overflow-hidden">
           {[
-            { label: "Total devido",   value: fmt(globalStats.totalCost),    icon: <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" /> },
-            { label: "Total pago",     value: fmt(globalStats.totalPaid),    icon: <TrendingDown className="h-3.5 w-3.5 text-emerald-500" /> },
-            { label: "Horas totais",   value: `${globalStats.totalHours.toFixed(1)}h`, icon: <Clock className="h-3.5 w-3.5 text-muted-foreground" /> },
+            { label: "Devido",   value: fmt(globalStats.totalCost),    icon: <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" /> },
+            { label: "Pago",     value: fmt(globalStats.totalPaid),    icon: <TrendingDown className="h-3.5 w-3.5 text-emerald-500" /> },
+            { label: "Horas",   value: `${globalStats.totalHours.toFixed(1)}h`, icon: <Clock className="h-3.5 w-3.5 text-muted-foreground" /> },
           ].map(s => (
-            <div key={s.label} className="px-4 py-3">
-              <div className="flex items-center gap-1.5 mb-1">{s.icon}<span className="text-[10px] text-muted-foreground">{s.label}</span></div>
-              <p className="text-sm font-bold tabular-nums">{s.value}</p>
+            <div key={s.label} className="px-3 py-3 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-1 mb-1 min-w-0">{s.icon}<span className="text-[10px] text-muted-foreground truncate">{s.label}</span></div>
+              <p className="text-sm font-bold tabular-nums truncate">{s.value}</p>
             </div>
           ))}
         </div>
@@ -476,7 +476,7 @@ export function CollaboratorFinanceView({
 
       {/* ── Month Selector ── */}
       <div className="rounded-2xl border bg-card overflow-hidden">
-        <div className="px-4 py-3 border-b bg-muted/20 flex items-center gap-2">
+        <div className="px-4 py-3 border-b bg-muted/20 flex items-center gap-2 min-w-0">
           <Calendar className="h-3.5 w-3.5 text-muted-foreground/50" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Período</span>
         </div>
@@ -603,7 +603,7 @@ export function CollaboratorFinanceView({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-1 text-[11px] text-muted-foreground">
+                <div className="grid grid-cols-3 gap-1 text-[11px] text-muted-foreground overflow-hidden">
                   <span className="flex items-center gap-1"><Clock className="h-3 w-3 opacity-50" />{m.hours.toFixed(1)}h</span>
                   <span className="text-center font-medium">{fmt(m.cost)}</span>
                   <span className="text-right text-emerald-600 dark:text-emerald-400 font-semibold">{fmt(m.paid)} pago</span>
