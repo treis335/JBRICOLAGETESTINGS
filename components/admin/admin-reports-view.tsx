@@ -1,6 +1,7 @@
 // components/admin/admin-reports-view.tsx
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -9,6 +10,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { MonthlyReportModal } from "@/components/admin/monthly-report-modal"
 
 const reports = [
   {
@@ -71,7 +73,11 @@ const colorMap: Record<string, { card: string; icon: string; badge: string }> = 
 }
 
 export function AdminReportsView() {
+  const [showMonthlyReport, setShowMonthlyReport] = useState(false)
+
   return (
+    <>
+      <MonthlyReportModal open={showMonthlyReport} onClose={() => setShowMonthlyReport(false)} />
     <ScrollArea className="h-full w-full">
       <div className="px-3 sm:px-5 py-4 pb-24 md:py-8 md:pb-12 space-y-8 max-w-7xl mx-auto w-full">
 
@@ -131,15 +137,27 @@ export function AdminReportsView() {
                     <span className="text-xs text-muted-foreground">
                       Formato: <span className="font-medium text-foreground">{report.format}</span>
                     </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled
-                      className="h-8 gap-1.5 opacity-60 cursor-not-allowed"
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                      Em breve
-                    </Button>
+                    {report.title === "Relatório Mensal" ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowMonthlyReport(true)}
+                        className="h-8 gap-1.5 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/30"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        Gerar
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        className="h-8 gap-1.5 opacity-60 cursor-not-allowed"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        Em breve
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -160,5 +178,6 @@ export function AdminReportsView() {
 
       </div>
     </ScrollArea>
+    </>
   )
 }
