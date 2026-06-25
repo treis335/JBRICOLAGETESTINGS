@@ -769,9 +769,9 @@ export default function CollaboratorDetailPage() {
         />
       )}
 
-      <div className="min-h-screen bg-background">
-        <ScrollArea className="h-screen">
-          <div className="max-w-6xl mx-auto">
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <ScrollArea className="h-screen overflow-x-hidden">
+          <div className="max-w-6xl mx-auto w-full overflow-x-hidden">
 
             {/* ── Top Bar ── */}
             <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-md border-b">
@@ -847,14 +847,14 @@ export default function CollaboratorDetailPage() {
             </div>
 
             {/* ── KPI Grid ── */}
-            <div className="px-4 pb-6 md:px-8">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="px-4 pb-6 md:px-8 overflow-x-hidden">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 min-w-0">
                 {kpis.map((kpi) => {
                   const c    = colorMap[kpi.color]
                   const Icon = kpi.icon
                   return (
                     <div key={kpi.label}
-                      className={cn("relative rounded-2xl border p-3.5 md:p-5 transition-all hover:shadow-sm", c.card)}>
+                      className={cn("relative rounded-2xl border p-3.5 md:p-5 transition-all hover:shadow-sm min-w-0 overflow-hidden", c.card)}>
                       <div className="flex items-start justify-between mb-2.5">
                         <div className={cn("inline-flex p-2 rounded-xl", c.iconBg)}>
                           <Icon className={cn("h-3.5 w-3.5 md:h-4 md:w-4", c.icon)} />
@@ -868,7 +868,7 @@ export default function CollaboratorDetailPage() {
                       <p className="text-[10px] md:text-[11px] uppercase tracking-wide font-medium text-muted-foreground mb-1 leading-tight">
                         {kpi.label}
                       </p>
-                      <p className="text-lg md:text-2xl font-bold tracking-tight">{kpi.value}</p>
+                      <p className="text-lg md:text-2xl font-bold tracking-tight truncate min-w-0">{kpi.value}</p>
                       <p className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5">{kpi.sub}</p>
                       {kpi.nav && (
                         <div className="flex sm:hidden mt-2 pt-2 border-t border-current/10">
