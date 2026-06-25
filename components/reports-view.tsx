@@ -527,8 +527,8 @@ export function ReportsView({ initialDate }: { initialDate?: Date } = {}) {
               { value: `${totals.valorTotal.toFixed(0)}€`, label: "valor", color: "text-emerald-600 dark:text-emerald-400" },
             ].map((kpi) => (
               <div key={kpi.label} className="flex flex-col items-center py-2.5">
-                <span className={`text-[15px] font-black leading-none tabular-nums tracking-tight ${kpi.color}`}>{kpi.value}</span>
-                <span className="text-[9px] uppercase tracking-widest text-muted-foreground/50 font-bold">{kpi.label}</span>
+                <span className={`text-[13px] sm:text-[15px] font-black leading-none tabular-nums tracking-tight ${kpi.color}`}>{kpi.value}</span>
+                <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-muted-foreground/50 font-bold">{kpi.label}</span>
               </div>
             ))}
           </div>
@@ -537,7 +537,7 @@ export function ReportsView({ initialDate }: { initialDate?: Date } = {}) {
 
       {/* ── Content ── */}
       <ScrollArea className="flex-1">
-        <div className="p-4 md:p-8 space-y-4 pb-32 md:pb-20 max-w-4xl mx-auto">
+        <div className="p-3 sm:p-4 md:p-8 space-y-4 pb-32 md:pb-20 max-w-4xl mx-auto">
 
           {!hasEntries && (
             <div className="flex flex-col items-center justify-center py-32 text-center animate-fade-in">
@@ -650,7 +650,7 @@ export function ReportsView({ initialDate }: { initialDate?: Date } = {}) {
               )}
 
               {/* ── Botões de exportação ── */}
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Button
                   onClick={exportPDF}
                   className="w-full h-12 md:h-13 text-sm font-bold bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 shadow-md rounded-2xl press-effect gap-2"

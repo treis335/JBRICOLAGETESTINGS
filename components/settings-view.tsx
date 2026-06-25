@@ -739,7 +739,7 @@ export function SettingsView() {
           <div className="pb-28 md:pb-16 w-full max-w-xl mx-auto">
 
             {/* ── Hero Header ── */}
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-hidden w-full">
               {/* Background with mesh gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-black" />
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-600/20 via-transparent to-transparent" />

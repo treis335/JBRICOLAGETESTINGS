@@ -408,10 +408,10 @@ export function CalendarView({ onSelectDate, onAddToday }: CalendarViewProps) {
         <div className="flex items-center gap-1">
           <button
             onClick={() => setReportModalOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 h-8 rounded-xl bg-muted/60 hover:bg-muted border border-border/40 text-xs font-medium text-foreground transition-colors"
+            className="flex items-center gap-1.5 px-2 h-8 rounded-xl bg-muted/60 hover:bg-muted border border-border/40 text-xs font-medium text-foreground transition-colors shrink-0"
           >
             <FileText className="h-3.5 w-3.5" />
-            Relatório
+            <span className="hidden xs:inline">Relatório</span>
           </button>
           <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl press-effect" onClick={() => handleMonthChange("next")}>
             <ChevronRight className="h-4 w-4" />
@@ -432,7 +432,7 @@ export function CalendarView({ onSelectDate, onAddToday }: CalendarViewProps) {
 
       {/* ── Calendar ── */}
       <div className="flex-1 overflow-auto bg-muted/10">
-        <div className="p-3 md:p-8 max-w-xl mx-auto md:max-w-2xl">
+        <div className="p-2 sm:p-4 md:p-8 max-w-xl mx-auto md:max-w-2xl w-full">
 
           {/* Weekday headers */}
           <div className="grid grid-cols-7 mb-2">
@@ -447,7 +447,7 @@ export function CalendarView({ onSelectDate, onAddToday }: CalendarViewProps) {
           </div>
 
           {/* Day cells */}
-          <div className="grid grid-cols-7 gap-1.5 md:gap-2">
+          <div className="grid grid-cols-7 gap-0.5 sm:gap-1.5 md:gap-2">
             {calendarDays.map((dayObj, index) => {
               if (!dayObj) return <div key={`empty-${index}`} className="aspect-square" />
 

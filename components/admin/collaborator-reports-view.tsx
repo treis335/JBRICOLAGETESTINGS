@@ -189,7 +189,7 @@ export function CollaboratorReportsView({ collaborator, initialDate }: Collabora
           >
             <ChevronLeft className="h-3.5 w-3.5" />
           </button>
-          <span className="text-sm font-medium capitalize min-w-[140px] text-center">{rangeLabel}</span>
+          <span className="text-sm font-medium capitalize flex-1 text-center truncate px-2">{rangeLabel}</span>
           <button
             onClick={() => navigate("next")}
             className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-muted transition-colors text-muted-foreground"

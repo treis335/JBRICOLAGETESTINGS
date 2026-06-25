@@ -81,7 +81,7 @@ export function CollaboratorOverview({
       >
         <ChevronLeft className="h-3.5 w-3.5" />
       </button>
-      <span className="text-[10px] font-semibold text-muted-foreground min-w-[100px] text-center">
+      <span className="text-[10px] font-semibold text-muted-foreground text-center truncate">
         {MONTH_NAMES_PT[selectedMonth.month]} {selectedMonth.year}
       </span>
       <button

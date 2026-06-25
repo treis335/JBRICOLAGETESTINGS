@@ -418,7 +418,7 @@ function DetailPanel({ collab, selectedMonthKey, onClose, onPay, onDeletePayment
                 m.periodo === selectedMonthKey ? "border-primary/30 bg-primary/5" : "bg-card"
               )}>
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap min-w-0">
                     <span className="text-xs font-bold capitalize">{fmtMonth(m.periodo)}</span>
                     {m.periodo === selectedMonthKey && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-bold">ATUAL</span>
@@ -511,7 +511,7 @@ function DetailPanel({ collab, selectedMonthKey, onClose, onPay, onDeletePayment
   }
 
   return (
-    <div className="w-[340px] xl:w-[380px] shrink-0 border-l bg-card flex flex-col overflow-hidden">
+    <div className="w-full xl:w-[380px] shrink-0 border-l bg-card flex flex-col overflow-hidden">
       {panelContent}
     </div>
   )
@@ -533,7 +533,7 @@ export function AdminFinanceView() {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768)
+    const check = () => setIsMobile(window.innerWidth < 1024)
     check()
     window.addEventListener("resize", check)
     return () => window.removeEventListener("resize", check)
@@ -748,7 +748,7 @@ export function AdminFinanceView() {
   if (error) return <div className="p-4 text-red-600 text-sm">{error}</div>
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex h-full overflow-hidden min-w-0 w-full">
 
       {/* ═══ MAIN ═══ */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
@@ -885,7 +885,7 @@ export function AdminFinanceView() {
             </div>
 
             {/* Mobile: Cards */}
-            <div className="md:hidden space-y-3">
+            <div className="lg:hidden space-y-3">
               {filtered.length === 0 ? (
                 <div className="py-16 text-center text-muted-foreground">
                   <Users className="h-8 w-8 mx-auto mb-3 opacity-20" />
@@ -902,7 +902,7 @@ export function AdminFinanceView() {
             </div>
 
             {/* Desktop: Table */}
-            <div className="hidden md:block rounded-xl border bg-card overflow-hidden">
+            <div className="hidden lg:block rounded-xl border bg-card overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>

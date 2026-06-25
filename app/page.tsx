@@ -77,7 +77,7 @@ function AppContent() {
       <SideNav activeTab={activeTab} onTabChange={setActiveTab} onAddToday={handleAddToday} />
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 lg:pl-64">
+      <div className="flex-1 min-w-0 lg:pl-64 overflow-hidden">
         <main className="flex-1 pb-16 lg:pb-0">
           <TabPane active={activeTab === "calendar"}>
             <CalendarView onSelectDate={handleSelectDate} onAddToday={handleAddToday} />

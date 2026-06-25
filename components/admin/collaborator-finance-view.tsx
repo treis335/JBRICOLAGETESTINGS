@@ -135,7 +135,7 @@ function MonthNav({ current, months, onChange }: {
             data-active={m === current}
             onClick={() => onChange(m)}
             className={cn(
-              "h-7 px-2.5 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0 capitalize",
+              "h-7 px-2 rounded-lg text-[11px] font-semibold transition-all shrink-0 capitalize",
               m === current
                 ? "bg-foreground text-background shadow-sm"
                 : m === today

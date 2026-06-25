@@ -129,7 +129,7 @@ function TransferModal({
           </div>
 
           {/* Search */}
-          <div className="px-4 py-3 border-b border-border/40 shrink-0">
+          <div className="px-4 py-3 border-b border-border/40 shrink-0 overflow-x-auto" style={{scrollbarWidth:"none"}}>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               <Input
@@ -514,7 +514,7 @@ function ObraDetailTabs({
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap min-w-0">
                       <span className="text-sm font-semibold capitalize">
                         {new Date(date + "T12:00:00").toLocaleDateString("pt-PT", { weekday: "long" })}
                       </span>

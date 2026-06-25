@@ -79,7 +79,7 @@ function MonthNavigator({ month, year, onChange }: {
       <button onClick={() => go(-1)} className="w-8 h-8 rounded-xl border border-border/50 bg-background hover:bg-muted flex items-center justify-center transition-colors">
         <ChevronLeft className="h-4 w-4 text-muted-foreground" />
       </button>
-      <div className="flex items-center gap-2 px-3 h-8 rounded-xl border border-border/50 bg-background min-w-[160px] justify-center">
+      <div className="flex items-center gap-2 px-3 h-8 rounded-xl border border-border/50 bg-background flex-1 justify-center min-w-0">
         <span className="text-sm font-semibold capitalize">{label}</span>
         {isCurrentMonth && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">hoje</span>}
       </div>
@@ -185,7 +185,7 @@ function FinanceSummaryCard({
       </div>
 
       {/* Values */}
-      <div className="grid grid-cols-2 divide-x divide-border/40">
+      <div className="grid grid-cols-2 divide-x divide-border/40 min-w-0">
         <div className="px-5 py-4">
           <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5">Total Pendente</p>
           <p className={cn(
