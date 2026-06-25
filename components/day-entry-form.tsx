@@ -1,6 +1,8 @@
 // day-entry-form.tsx
 "use client"
 import { useState, useEffect, useMemo } from "react"
+import { ServiceFotos } from "@/components/forms/service-fotos"
+import type { ServiceFoto } from "@/lib/types"
 import { PhotoLightbox } from "@/components/forms/photo-lightbox"
 import { ObraPicker } from "@/components/forms/obra-picker"
 import { ObraInfoSheet } from "@/components/forms/obra-info-sheet"
@@ -60,6 +62,7 @@ interface Service {
   equipaUids?: string[]
   materiais: string[]
   totalHoras?: number
+  fotos?: ServiceFoto[]     // retrocompatível — ausente em dados antigos
 }
 
 interface Collaborator {
@@ -112,6 +115,7 @@ function entryToServices(entry: DayEntry): Service[] {
       equipaUids: normalizeEquipeUids(s.equipaUids),
       materiais: Array.isArray(s.materiais) ? s.materiais.filter((m: any) => typeof m === "string") : [],
       totalHoras: typeof s.totalHoras === "number" ? s.totalHoras : undefined,
+      fotos: Array.isArray(s.fotos) ? s.fotos : [],   // retrocompatível
     }))
   }
 
@@ -403,6 +407,7 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
         equipaUids: s.equipaUids || [],
         materiais: s.materiais,       // preserved for retrocompatibility
         totalHoras: s.totalHoras,     // preserved for retrocompatibility
+        fotos: s.fotos ?? [],         // fotos do serviço — retrocompatível
       })),
       descricao: services.length === 1 ? services[0].descricao : "Múltiplos serviços",
       equipa: services.flatMap(s => s.equipa),
@@ -696,6 +701,15 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                   </Tabs>
                 )}
               </div>
+
+              {/* ── Fotos do Serviço ── */}
+              {activeService && (
+                <ServiceFotos
+                  serviceId={activeService.id}
+                  fotos={activeService.fotos ?? []}
+                  onChange={fotos => updateService(activeService.id, { fotos })}
+                />
+              )}
 
               {/* ── Remover serviço ── */}
               {services.length > 1 && activeService && (

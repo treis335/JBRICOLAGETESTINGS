@@ -3,14 +3,24 @@
 import { v4 as uuidv4 } from "uuid"
 
 // Tipo para cada serviço individual dentro do dia
+// Foto de um serviço (antes/depois)
+export interface ServiceFoto {
+  url: string
+  publicId: string
+  tipo: "antes" | "depois"
+  uploadedAt: string // ISO string
+}
+
 export interface Service {
   id: string
   obraNome: string
-  obraId?:string
+  obraId?: string
   descricao: string
   equipa: string[]
   materiais: string[]
-  totalHoras?: number 
+  totalHoras?: number
+  // Fotos opcionais — máx 2 "antes" + 2 "depois". Dados antigos não têm este campo.
+  fotos?: ServiceFoto[]
 }
 
 // Tipo principal do dia
