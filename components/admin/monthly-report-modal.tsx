@@ -74,38 +74,47 @@ function buildRows(collaborators: any[], monthKey: string): MonthRow[] {
     .sort((a, b) => b.totalHoras - a.totalHoras)
 }
 
-// ── Export Excel ──────────────────────────────────────────────────────────────
+// ── Export Excel (CSV com BOM — abre nativamente no Excel) ───────────────────
 async function exportExcel(rows: MonthRow[], monthKey: string, monthLabel: string) {
-  const XLSX = await import("xlsx")
+  const sep = ";"
+  const esc = (v: string | number) => {
+    const s = String(v)
+    return s.includes(sep) || s.includes('"') || s.includes("\n")
+      ? `"${s.replace(/"/g, '""')}"` : s
+  }
+  const num = (v: number) => String(v).replace(".", ",") // PT decimal
 
-  const header = ["Colaborador", "Email", "Taxa €/h", "Horas Normais", "Horas Extra", "Total Horas", "Custo Total", "Pago", "Pendente"]
-  const data = rows.map(r => [
-    r.name, r.email, r.rate,
-    r.normalHoras, r.extraHoras, r.totalHoras,
-    r.custo, r.pago, r.pendente,
-  ])
-
-  // Totals row
-  const totals = ["TOTAL", "", "",
-    rows.reduce((s, r) => s + r.normalHoras, 0),
-    rows.reduce((s, r) => s + r.extraHoras, 0),
-    rows.reduce((s, r) => s + r.totalHoras, 0),
-    rows.reduce((s, r) => s + r.custo, 0),
-    rows.reduce((s, r) => s + r.pago, 0),
-    rows.reduce((s, r) => s + r.pendente, 0),
+  const header = ["Colaborador", "Email", "Taxa €/h", "H. Normais", "H. Extra", "Total Horas", "Custo Total (€)", "Pago (€)", "Pendente (€)"]
+  const lines: string[] = [
+    `Relatório Mensal JBricolage${sep}${monthLabel}`,
+    "",
+    header.map(esc).join(sep),
+    ...rows.map(r => [
+      esc(r.name), esc(r.email), num(r.rate),
+      num(r.normalHoras), num(r.extraHoras), num(r.totalHoras),
+      num(r.custo), num(r.pago), num(r.pendente),
+    ].join(sep)),
+    "",
+    [
+      "TOTAL", "",
+      num(rows.reduce((s, r) => s + r.normalHoras, 0)),
+      num(rows.reduce((s, r) => s + r.extraHoras, 0)),
+      num(rows.reduce((s, r) => s + r.totalHoras, 0)),
+      num(rows.reduce((s, r) => s + r.custo, 0)),
+      num(rows.reduce((s, r) => s + r.pago, 0)),
+      num(rows.reduce((s, r) => s + r.pendente, 0)),
+    ].join(sep),
   ]
 
-  const ws = XLSX.utils.aoa_to_sheet([header, ...data, [], totals])
-
-  // Column widths
-  ws["!cols"] = [
-    { wch: 28 }, { wch: 32 }, { wch: 10 }, { wch: 14 }, { wch: 12 },
-    { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
-  ]
-
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, `Relatório ${monthKey}`)
-  XLSX.writeFile(wb, `relatorio-mensal-${monthKey}.xlsx`)
+  // BOM para Excel reconhecer UTF-8
+  const bom = "﻿"
+  const blob = new Blob([bom + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = `relatorio-mensal-${monthKey}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 // ── Export PDF ────────────────────────────────────────────────────────────────
@@ -372,7 +381,7 @@ export function MonthlyReportModal({ open, onClose }: MonthlyReportModalProps) {
                 className="flex-1 sm:flex-none flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-sm font-semibold transition-all disabled:opacity-50 disabled:pointer-events-none shadow-md shadow-emerald-600/20"
               >
                 <FileSpreadsheet className="h-4 w-4" />
-                {exporting === "excel" ? "A exportar…" : "Excel"}
+{exporting === "excel" ? "A exportar…" : "Excel (.csv)"}
               </button>
               <button
                 onClick={() => handleExport("pdf")}
