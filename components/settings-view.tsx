@@ -553,7 +553,7 @@ function Section({ icon, gradient, title, children }: {
   icon: React.ReactNode; gradient: string; title: string; children: React.ReactNode
 }) {
   return (
-    <div className="rounded-3xl border border-border/40 bg-card/80 backdrop-blur-sm shadow-sm overflow-hidden w-full">
+    <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm overflow-hidden w-full">
       <div className="flex items-center gap-3 px-4 py-4 border-b border-border/20 bg-muted/10">
         <div className={cn(
           "w-8 h-8 rounded-xl bg-gradient-to-br flex items-center justify-center shrink-0 shadow-md",
@@ -736,7 +736,7 @@ export function SettingsView() {
 
       <ScrollArea className="h-full animate-fade-in">
         <div className="min-h-full bg-gradient-to-b from-slate-50 via-white to-slate-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
-          <div className="pb-28 md:pb-16 w-full max-w-xl mx-auto">
+          <div className="pb-28 md:pb-16 w-full max-w-xl mx-auto min-w-0">
 
             {/* ── Hero Header ── */}
             <div className="relative overflow-hidden w-full">
@@ -750,7 +750,7 @@ export function SettingsView() {
                 backgroundSize: "32px 32px"
               }} />
 
-              <div className="relative px-4 sm:px-6 pt-8 sm:pt-10 pb-8 sm:pb-10">
+              <div className="relative px-4 sm:px-6 pt-8 sm:pt-10 pb-8 sm:pb-10 min-w-0">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center shrink-0 shadow-xl shadow-blue-500/30">
                     <Settings2 className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
@@ -763,7 +763,7 @@ export function SettingsView() {
               </div>
             </div>
 
-            <div className="space-y-3 px-3 sm:px-4 pt-4">
+            <div className="space-y-3 px-4 sm:px-5 pt-4">
 
               {/* ── PERFIL ── */}
               <Section icon={<User className="h-4 w-4" />} gradient="from-blue-500 to-indigo-600" title="Perfil">

@@ -196,7 +196,7 @@ function CollabCard({ f, onOpen, onPay }: {
       className={cn("bg-card rounded-2xl border border-border border-l-4 overflow-hidden active:scale-[0.99] transition-transform cursor-pointer", borderColor)}
       onClick={onOpen}
     >
-      <div className="p-4 space-y-3">
+      <div className="px-3 sm:px-4 py-3 space-y-3">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
@@ -355,7 +355,7 @@ function DetailPanel({ collab, selectedMonthKey, onClose, onPay, onDeletePayment
   const panelContent = (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-4 py-3.5 border-b flex items-center justify-between gap-3 shrink-0 bg-card">
+      <div className="px-3 sm:px-4 py-3.5 border-b flex items-center justify-between gap-3 shrink-0 bg-card">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold shrink-0">
             {initials(collab.name)}
@@ -374,7 +374,7 @@ function DetailPanel({ collab, selectedMonthKey, onClose, onPay, onDeletePayment
       </div>
 
       {/* Summary */}
-      <div className="px-4 py-3 border-b bg-muted/30 shrink-0">
+      <div className="px-3 sm:px-4 py-3 border-b bg-muted/30 shrink-0">
         <div className="grid grid-cols-3 gap-2 text-center">
           {[
             { label: "Em dívida", value: fmt(collab.totalPendingAll), color: collab.totalPendingAll > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600" },
@@ -447,7 +447,7 @@ function DetailPanel({ collab, selectedMonthKey, onClose, onPay, onDeletePayment
             ))}
           </div>
         ) : (
-          <div className="p-3 space-y-1.5">
+          <div className="px-3 sm:px-4 py-3 space-y-1.5">
             {allPayments.length === 0 ? (
               <div className="py-10 text-center text-sm text-muted-foreground">Sem pagamentos registados.</div>
             ) : allPayments.map(p => (
@@ -754,7 +754,7 @@ export function AdminFinanceView() {
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
         {/* Sticky header */}
-        <div className="shrink-0 border-b bg-card/95 backdrop-blur-sm px-4 py-3 space-y-3">
+        <div className="shrink-0 border-b bg-card/95 backdrop-blur-sm px-3 sm:px-4 py-3 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h1 className="text-lg font-bold tracking-tight leading-tight">Financeiro</h1>
@@ -783,7 +783,7 @@ export function AdminFinanceView() {
 
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-4 space-y-4 pb-24 md:pb-8 max-w-5xl mx-auto">
+          <div className="px-3 sm:px-4 py-4 space-y-4 pb-24 md:pb-8 max-w-5xl mx-auto w-full">
 
             {/* Overdue alert */}
             {kpis.withOverdue > 0 && (
@@ -803,9 +803,9 @@ export function AdminFinanceView() {
                 { icon: <Clock className="h-4 w-4" />, label: "Total pendente", value: fmt(kpis.globalPend), sub: "Todos os meses", color: "text-amber-600 dark:text-amber-400", iconCls: "bg-amber-100 dark:bg-amber-900/40 text-amber-600", cardCls: "border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/10" },
                 { icon: <AlertTriangle className="h-4 w-4" />, label: "Em atraso", value: fmt(kpis.overdue), sub: `${kpis.withOverdue} colaborador${kpis.withOverdue !== 1 ? "es" : ""}`, color: "text-red-600 dark:text-red-400", iconCls: "bg-red-100 dark:bg-red-900/40 text-red-600", cardCls: "border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/10" },
               ].map(k => (
-                <div key={k.label} className={cn("rounded-xl border p-3.5", k.cardCls)}>
+                <div key={k.label} className={cn("rounded-xl border p-3 sm:p-3.5", k.cardCls)}>
                   <div className={cn("inline-flex p-1.5 rounded-lg mb-2.5", k.iconCls)}>{k.icon}</div>
-                  <p className={cn("text-xl font-bold tabular-nums leading-tight", k.color)}>{k.value}</p>
+                  <p className={cn("text-lg sm:text-xl font-bold tabular-nums leading-tight truncate", k.color)}>{k.value}</p>
                   <p className="text-[11px] font-semibold opacity-80 mt-0.5">{k.label}</p>
                   <p className="text-[10px] text-muted-foreground mt-0.5">{k.sub}</p>
                 </div>

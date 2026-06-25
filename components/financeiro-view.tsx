@@ -194,7 +194,7 @@ export function FinanceiroView() {
 
   return (
     <div className="flex flex-col h-full overflow-auto pb-24 animate-fade-in w-full min-w-0">
-      <div className="p-3 sm:p-4 md:p-8 space-y-6 max-w-4xl mx-auto w-full min-w-0">
+      <div className="px-3 sm:px-5 py-4 md:py-8 space-y-6 max-w-4xl mx-auto w-full min-w-0">
 
         {/* ── Page Title ── */}
         <div className="flex items-center gap-3">

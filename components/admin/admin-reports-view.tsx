@@ -73,7 +73,7 @@ const colorMap: Record<string, { card: string; icon: string; badge: string }> = 
 export function AdminReportsView() {
   return (
     <ScrollArea className="h-full">
-      <div className="p-4 pb-24 md:p-8 md:pb-12 space-y-8 max-w-7xl mx-auto">
+      <div className="px-3 sm:px-5 py-4 pb-24 md:py-8 md:pb-12 space-y-8 max-w-7xl mx-auto w-full">
 
         {/* ── Header ── */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">

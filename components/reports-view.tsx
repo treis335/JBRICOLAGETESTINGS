@@ -537,7 +537,7 @@ export function ReportsView({ initialDate }: { initialDate?: Date } = {}) {
 
       {/* ── Content ── */}
       <ScrollArea className="flex-1">
-        <div className="p-3 sm:p-4 md:p-8 space-y-4 pb-32 md:pb-20 max-w-4xl mx-auto">
+        <div className="px-3 sm:px-5 py-4 md:py-8 space-y-4 pb-32 md:pb-20 max-w-4xl mx-auto w-full">
 
           {!hasEntries && (
             <div className="flex flex-col items-center justify-center py-32 text-center animate-fade-in">
