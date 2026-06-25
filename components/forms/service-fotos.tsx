@@ -196,13 +196,14 @@ function UploadingRow({ name, progress }: { name: string; progress: number }) {
 
 // ─── FotoStrip — lista horizontal de thumbnails + botão add ──────────────────
 function FotoStrip({
-  tipo, fotos, serviceId, userId, onChange, disabled,
+  tipo, fotos, serviceId, userId, onChange, onUploadingChange, disabled,
 }: {
   tipo: "antes" | "depois"
   fotos: ServiceFoto[]
   serviceId: string
   userId: string
   onChange: (f: ServiceFoto[]) => void
+  onUploadingChange?: (isUploading: boolean) => void
   disabled?: boolean
 }) {
   const [showPick, setShowPick]       = useState(false)
@@ -217,9 +218,16 @@ function FotoStrip({
 
   const isAntes = tipo === "antes"
 
+  // Ref para ter sempre o valor atual de fotos sem stale closure
+  const fotosRef = useRef(fotos)
+  fotosRef.current = fotos
+
   const processFile = useCallback(async (file: File) => {
-    const key = `${Date.now()}-${file.name}`
-    setUploading(prev => [...prev, { name: file.name, progress: 0 }])
+    setUploading(prev => {
+      const next = [...prev, { name: file.name, progress: 0 }]
+      onUploadingChange?.(true)
+      return next
+    })
     setErrors([])
     try {
       const compressed = await compressImage(file)
@@ -227,19 +235,25 @@ function FotoStrip({
         compressed, userId, serviceId, tipo,
         pct => setUploading(prev => prev.map(u => u.name === file.name ? { ...u, progress: pct } : u))
       )
-      onChange([...fotos, foto])
+      // Usa fotosRef.current para ter sempre o estado mais recente
+      onChange([...fotosRef.current, foto])
     } catch (err: any) {
       setErrors(prev => [...prev, err.message ?? "Erro no upload"])
     } finally {
-      setUploading(prev => prev.filter(u => u.name !== file.name))
+      setUploading(prev => {
+        const next = prev.filter(u => u.name !== file.name)
+        if (next.length === 0) onUploadingChange?.(false)
+        return next
+      })
     }
-  }, [fotos, onChange, serviceId, tipo, userId])
+  }, [onChange, serviceId, tipo, userId])
 
   const handleFiles = useCallback(async (files: FileList | null) => {
     if (!files) return
     const remaining = MAX_FOTOS_POR_TIPO - mine.length
     const toProcess = Array.from(files).slice(0, remaining)
-    for (const f of toProcess) await processFile(f)
+    // Processar em paralelo — cada um usa fotosRef.current atualizado
+    await Promise.all(toProcess.map(f => processFile(f)))
   }, [mine.length, processFile])
 
   const handleRemove = useCallback((foto: ServiceFoto) => {
@@ -380,10 +394,11 @@ export interface ServiceFotosProps {
   serviceId: string
   fotos: ServiceFoto[]
   onChange: (fotos: ServiceFoto[]) => void
+  onUploadingChange?: (isUploading: boolean) => void
   disabled?: boolean
 }
 
-export function ServiceFotos({ serviceId, fotos, onChange, disabled }: ServiceFotosProps) {
+export function ServiceFotos({ serviceId, fotos, onChange, onUploadingChange, disabled }: ServiceFotosProps) {
   const { user } = useAuth()
   const userId    = user?.uid ?? "anonymous"
   const safefotos = fotos ?? []
@@ -404,8 +419,8 @@ export function ServiceFotos({ serviceId, fotos, onChange, disabled }: ServiceFo
 
       {/* Antes + Depois side by side */}
       <div className="grid grid-cols-2 gap-4">
-        <FotoStrip tipo="antes"  fotos={safefotos} serviceId={serviceId} userId={userId} onChange={onChange} disabled={disabled} />
-        <FotoStrip tipo="depois" fotos={safefotos} serviceId={serviceId} userId={userId} onChange={onChange} disabled={disabled} />
+        <FotoStrip tipo="antes"  fotos={safefotos} serviceId={serviceId} userId={userId} onChange={onChange} onUploadingChange={onUploadingChange} disabled={disabled} />
+        <FotoStrip tipo="depois" fotos={safefotos} serviceId={serviceId} userId={userId} onChange={onChange} onUploadingChange={onUploadingChange} disabled={disabled} />
       </div>
 
       {total > 0 && (

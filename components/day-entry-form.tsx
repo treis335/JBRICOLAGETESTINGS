@@ -166,6 +166,7 @@ function serviceHasData(s: Service): boolean {
 // ─────────────────────────────────────────────────────────────────────────────
 export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
   const { getEntry, addEntry, deleteEntry, data } = useWorkTracker()
+  const [isUploading, setIsUploading] = useState(false)
   const { activeCollaborators, loading: loadingCollaborators } = useActiveCollaborators()
 
   const nomesLegados = useMemo(() => getNomesColaboradores(), [])
@@ -627,6 +628,7 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                           serviceId={s.id}
                           fotos={s.fotos ?? []}
                           onChange={fotos => updateService(s.id, { fotos })}
+                          onUploadingChange={setIsUploading}
                         />
 
                         {/* ── Equipa ── */}
@@ -768,11 +770,11 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={services.length === 0}
+                  disabled={services.length === 0 || isUploading}
                   className="w-full h-14 flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none text-white font-bold text-base transition-all shadow-xl shadow-emerald-600/25 press-effect"
                 >
-                  <Check className="h-5 w-5" />
-                  {isEditing ? "Guardar alterações" : "Guardar registo"}
+                  {isUploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Check className="h-5 w-5" />}
+                  {isUploading ? "A carregar fotos…" : isEditing ? "Guardar alterações" : "Guardar registo"}
                 </button>
               </div>
             )}
