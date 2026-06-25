@@ -4,8 +4,8 @@
 import { useMemo, useState } from "react"
 import {
   Clock, HardHat, Users, Camera, ChevronDown, ChevronUp,
-  CircleCheck, CircleDashed, AlertCircle, Image as ImageIcon,
-  MapPin, Euro, Sun, Sunrise, Sunset,
+  ChevronLeft, ChevronRight, CircleCheck, CircleDashed, AlertCircle,
+  Image as ImageIcon, MapPin, Euro, Sun, Sunrise, Sunset, CalendarDays,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { resolveEntryTaxa } from "@/lib/utils"
@@ -188,7 +188,7 @@ function CollabCard({ collab, entry, isExpanded, onToggle }: CollabCardProps) {
           </div>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             {!hasRegistered ? (
-              <span className="text-[11px] text-muted-foreground/50 italic">Sem registo hoje</span>
+              <span className="text-[11px] text-muted-foreground/50 italic">Sem registo neste dia</span>
             ) : obras.length > 0 ? (
               <span className="text-[11px] text-muted-foreground/70 flex items-center gap-1 truncate">
                 <HardHat className="h-3 w-3 shrink-0" />
@@ -291,6 +291,91 @@ function CollabCard({ collab, entry, isExpanded, onToggle }: CollabCardProps) {
   )
 }
 
+// ── helpers for date nav ─────────────────────────────────────────────────────
+function isoToDate(iso: string): Date {
+  const [y, m, d] = iso.split("-").map(Number)
+  return new Date(y, m - 1, d)
+}
+
+function dateToISO(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+}
+
+function dayLabel(iso: string): string {
+  const d = isoToDate(iso)
+  return d.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })
+}
+
+function isToday(iso: string): boolean {
+  return iso === todayISO()
+}
+
+function isWeekend(iso: string): boolean {
+  const day = isoToDate(iso).getDay()
+  return day === 0 || day === 6
+}
+
+// Find all dates that have at least one entry across all collaborators
+function allEntryDates(collaborators: Collaborator[]): string[] {
+  const dates = new Set<string>()
+  collaborators.forEach(c => c.entries.forEach(e => { if (e.date) dates.add(e.date) }))
+  // also always include today
+  dates.add(todayISO())
+  return Array.from(dates).sort((a, b) => b.localeCompare(a)) // newest first
+}
+
+// ── Day Nav ───────────────────────────────────────────────────────────────────
+interface DayNavProps {
+  selectedDate: string
+  onChange: (date: string) => void
+  availableDates: string[]
+}
+
+function DayNav({ selectedDate, onChange, availableDates }: DayNavProps) {
+  const today = todayISO()
+  const idx = availableDates.indexOf(selectedDate)
+  const canGoNewer = idx > 0
+  const canGoOlder = idx < availableDates.length - 1
+
+  const goNewer = () => { if (canGoNewer) { onChange(availableDates[idx - 1]) } }
+  const goOlder = () => { if (canGoOlder) { onChange(availableDates[idx + 1]) } }
+  const goToday = () => onChange(today)
+
+  return (
+    <div className="flex items-center gap-1">
+      <button
+        type="button"
+        onClick={goOlder}
+        disabled={!canGoOlder}
+        className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-muted/60 disabled:opacity-25 disabled:cursor-not-allowed transition-all press-effect"
+        title="Dia anterior"
+      >
+        <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+      </button>
+
+      {!isToday(selectedDate) && (
+        <button
+          type="button"
+          onClick={goToday}
+          className="px-2.5 h-7 rounded-lg text-[10px] font-bold text-primary/70 hover:text-primary hover:bg-primary/8 transition-all"
+        >
+          Hoje
+        </button>
+      )}
+
+      <button
+        type="button"
+        onClick={goNewer}
+        disabled={!canGoNewer}
+        className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-muted/60 disabled:opacity-25 disabled:cursor-not-allowed transition-all press-effect"
+        title="Dia seguinte"
+      >
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </button>
+    </div>
+  )
+}
+
 // ── Main TodayPanel ───────────────────────────────────────────────────────────
 interface TodayPanelProps {
   collaborators: Collaborator[]
@@ -299,15 +384,23 @@ interface TodayPanelProps {
 export function TodayPanel({ collaborators }: TodayPanelProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const [selectedDate, setSelectedDate] = useState(todayISO())
 
+  // When date changes, collapse all expanded cards
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date)
+    setExpanded(new Set())
+  }
+
+  const availableDates = useMemo(() => allEntryDates(collaborators), [collaborators])
   const today = todayISO()
 
-  const { registered, absent, pending, totalHours, totalCost, totalFotos } = useMemo(() => {
+  const { registered, absent, totalHours, totalCost, totalFotos } = useMemo(() => {
     const registered: { collab: Collaborator; entry: DayEntry }[] = []
     const absent: Collaborator[] = []
 
     collaborators.forEach(c => {
-      const entry = c.entries.find(e => e.date === today)
+      const entry = c.entries.find(e => e.date === selectedDate)
       if (entry) {
         registered.push({ collab: c, entry })
       } else {
@@ -321,15 +414,8 @@ export function TodayPanel({ collaborators }: TodayPanelProps) {
     }, 0)
     const totalFotos = registered.reduce((s, r) => s + getAllFotos(r.entry).length, 0)
 
-    return {
-      registered,
-      absent,
-      pending: absent,
-      totalHours,
-      totalCost,
-      totalFotos,
-    }
-  }, [collaborators, today])
+    return { registered, absent, totalHours, totalCost, totalFotos }
+  }, [collaborators, selectedDate])
 
   const toggleExpanded = (id: string) => {
     setExpanded(prev => {
@@ -345,54 +431,89 @@ export function TodayPanel({ collaborators }: TodayPanelProps) {
   return (
     <div className="rounded-2xl border border-border/50 bg-card overflow-hidden shadow-sm">
       {/* Header */}
-      <button
-        type="button"
-        onClick={() => setCollapsed(v => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-muted/20 transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm shadow-orange-500/20">
-            <Sun className="h-5 w-5 text-white" />
+      <div className="flex items-center px-4 py-3.5 gap-3">
+
+        {/* Icon + collapse toggle */}
+        <button
+          type="button"
+          onClick={() => setCollapsed(v => !v)}
+          className="flex items-center gap-3 flex-1 min-w-0 text-left hover:opacity-80 transition-opacity"
+        >
+          <div className={cn(
+            "w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm shrink-0",
+            isToday(selectedDate)
+              ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-orange-500/20"
+              : isWeekend(selectedDate)
+                ? "bg-gradient-to-br from-violet-500 to-purple-600 shadow-violet-500/20"
+                : "bg-gradient-to-br from-slate-400 to-slate-600 shadow-slate-500/20"
+          )}>
+            {isToday(selectedDate)
+              ? <Sun className="h-5 w-5 text-white" />
+              : <CalendarDays className="h-5 w-5 text-white" />
+            }
           </div>
-          <div className="text-left">
-            <h2 className="text-base font-black text-foreground leading-tight capitalize">
-              {todayLabel()}
-            </h2>
-            <p className="text-xs text-muted-foreground/60 mt-0.5">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-base font-black text-foreground leading-tight capitalize truncate">
+                {dayLabel(selectedDate)}
+              </h2>
+              {isToday(selectedDate) && (
+                <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shrink-0">
+                  Hoje
+                </span>
+              )}
+              {isWeekend(selectedDate) && (
+                <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-950/40 text-violet-700 dark:text-violet-400 border border-violet-200 dark:border-violet-800 shrink-0">
+                  Fim de semana
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground/60 mt-0.5 truncate">
               {registered.length} de {collaborators.length} registos
               {totalFotos > 0 && ` · ${totalFotos} foto${totalFotos !== 1 ? "s" : ""}`}
             </p>
           </div>
-        </div>
+        </button>
 
-        {/* Stats + toggle */}
-        <div className="flex items-center gap-3">
-          {/* Quick stats */}
-          <div className="hidden sm:flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60">
-              <CircleCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-xs font-black text-emerald-700 dark:text-emerald-400">{registered.length}</span>
-            </div>
-            {pending.length > 0 && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-muted/50 border border-border/40">
-                <CircleDashed className="h-3.5 w-3.5 text-muted-foreground/50" />
-                <span className="text-xs font-bold text-muted-foreground/60">{pending.length}</span>
-              </div>
-            )}
-            {totalHours > 0 && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60">
-                <Clock className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                <span className="text-xs font-black text-blue-700 dark:text-blue-400">{totalHours}h</span>
-              </div>
-            )}
+        {/* Quick stats — desktop */}
+        <div className="hidden md:flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60">
+            <CircleCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-xs font-black text-emerald-700 dark:text-emerald-400">{registered.length}</span>
           </div>
-          {collapsed ? (
-            <ChevronDown className="h-5 w-5 text-muted-foreground/40 shrink-0" />
-          ) : (
-            <ChevronUp className="h-5 w-5 text-muted-foreground/40 shrink-0" />
+          {absent.length > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-muted/50 border border-border/40">
+              <CircleDashed className="h-3.5 w-3.5 text-muted-foreground/50" />
+              <span className="text-xs font-bold text-muted-foreground/60">{absent.length}</span>
+            </div>
+          )}
+          {totalHours > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60">
+              <Clock className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+              <span className="text-xs font-black text-blue-700 dark:text-blue-400">{totalHours}h</span>
+            </div>
           )}
         </div>
-      </button>
+
+        {/* Day navigation */}
+        <div className="shrink-0 flex items-center gap-1">
+          <DayNav
+            selectedDate={selectedDate}
+            onChange={handleDateChange}
+            availableDates={availableDates}
+          />
+          <button
+            type="button"
+            onClick={() => setCollapsed(v => !v)}
+            className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-muted/60 transition-all ml-1"
+          >
+            {collapsed
+              ? <ChevronDown className="h-4 w-4 text-muted-foreground/50" />
+              : <ChevronUp className="h-4 w-4 text-muted-foreground/50" />
+            }
+          </button>
+        </div>
+      </div>
 
       {/* Body */}
       {!collapsed && (
@@ -415,6 +536,20 @@ export function TodayPanel({ collaborators }: TodayPanelProps) {
 
           {/* Cards */}
           <div className="p-3 space-y-2">
+            {/* Empty state for day with no entries */}
+            {registered.length === 0 && absent.length === collaborators.length && collaborators.length > 0 && (
+              <div className="flex flex-col items-center gap-2.5 py-10 text-center">
+                <div className="w-14 h-14 rounded-3xl bg-muted/50 border border-border/30 flex items-center justify-center">
+                  <CalendarDays className="h-7 w-7 text-muted-foreground/25" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-muted-foreground/70">Sem registos neste dia</p>
+                  <p className="text-xs text-muted-foreground/40 mt-0.5">
+                    {isToday(selectedDate) ? "Os colaboradores ainda não registaram hoje" : "Nenhum colaborador registou actividade"}
+                  </p>
+                </div>
+              </div>
+            )}
             {/* Controls */}
             {registered.length > 1 && (
               <div className="flex items-center justify-between px-1 mb-3">
@@ -449,7 +584,7 @@ export function TodayPanel({ collaborators }: TodayPanelProps) {
               <div className="space-y-1.5 mt-3">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 px-1 flex items-center gap-1.5">
                   <AlertCircle className="h-3 w-3" />
-                  Sem registo hoje ({absent.length})
+                  {isToday(selectedDate) ? "Sem registo hoje" : "Sem registo neste dia"} ({absent.length})
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                   {absent.map(c => (
