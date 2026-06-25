@@ -882,9 +882,9 @@ export default function CollaboratorDetailPage() {
             </div>
 
             {/* ── Tabs ── */}
-            <div className="px-4 pb-10 md:px-8 overflow-x-hidden min-w-0">
+            <div className="pb-10 overflow-x-hidden min-w-0">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full min-w-0">
-                <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex h-11 rounded-xl bg-muted/50 p-1 mb-6 gap-0.5">
+                <div className="px-4 md:px-8"><TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex h-11 rounded-xl bg-muted/50 p-1 mb-6 gap-0.5">
                   {tabs.map(({ value, label, Icon }) => (
                     <TabsTrigger
                       key={value}
@@ -895,9 +895,9 @@ export default function CollaboratorDetailPage() {
                       <span className="hidden sm:inline whitespace-nowrap">{label}</span>
                     </TabsTrigger>
                   ))}
-                </TabsList>
+                </TabsList></div>
 
-                <TabsContent value="overview" className="focus-visible:outline-none mt-0">
+                <TabsContent value="overview" className="focus-visible:outline-none mt-0 px-4 md:px-8">
                   <CollaboratorOverview
                     collaborator={collaborator}
                     onRateUpdated={handleRateUpdated}
@@ -908,7 +908,7 @@ export default function CollaboratorDetailPage() {
                   />
                 </TabsContent>
 
-                <TabsContent value="finance" className="focus-visible:outline-none mt-0 overflow-x-hidden min-w-0">
+                <TabsContent value="finance" className="focus-visible:outline-none mt-0 px-4 md:px-8 overflow-x-hidden min-w-0">
                   <CollaboratorFinanceView
                     collaboratorId={collaborator.id}
                     collaboratorName={collaborator.name}
@@ -919,7 +919,7 @@ export default function CollaboratorDetailPage() {
                   />
                 </TabsContent>
 
-                <TabsContent value="calendar" className="focus-visible:outline-none mt-0">
+                <TabsContent value="calendar" className="focus-visible:outline-none mt-0 px-4 md:px-8">
                   <CollaboratorCalendarView
                     collaboratorId={collaborator.id}
                     collaboratorName={collaborator.name}
