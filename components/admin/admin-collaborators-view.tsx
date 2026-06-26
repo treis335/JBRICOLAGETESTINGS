@@ -469,8 +469,10 @@ export function AdminCollaboratorsView() {
     .sort((a, b) => a.name.localeCompare(b.name, "pt"))
 
   const stats = {
-    ativos: extended.filter(c => c.ativo).length,
-    suspensos: extended.filter(c => !c.ativo).length,
+    ativos:          extended.filter(c => c.ativo).length,
+    suspensos:       extended.filter(c => !c.ativo).length,
+    totalPendingAll: collaborators.reduce((s, col) => s + (col.pendingAmount || 0), 0),
+    avgRate:         collaborators.length > 0 ? Math.round(collaborators.reduce((s, col) => s + (col.currentRate || 0), 0) / collaborators.length) : 0,
   }
 
   const handleStatusToggled = useCallback((id: string, newAtivo: boolean) => {
@@ -551,15 +553,19 @@ export function AdminCollaboratorsView() {
         </div>
 
         {/* KPI */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border p-5 bg-card">
-            <p className="text-sm text-muted-foreground">Total de Colaboradores</p>
-            <p className="text-3xl font-bold mt-1">{stats.ativos + stats.suspensos}</p>
-          </div>
-          <div className="rounded-2xl border p-5 bg-card">
-            <p className="text-sm text-muted-foreground">Colaboradores Ativos</p>
-            <p className="text-3xl font-bold mt-1 text-emerald-600">{stats.ativos}</p>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[
+            { label: "Total",    value: stats.ativos + stats.suspensos, color: "text-foreground",                      icon: "👥" },
+            { label: "Ativos",   value: stats.ativos,                   color: "text-emerald-600 dark:text-emerald-400", icon: "✅" },
+            { label: "Inativos", value: stats.suspensos,                color: stats.suspensos > 0 ? "text-red-500 dark:text-red-400" : "text-muted-foreground/50", icon: "⛔" },
+            { label: "Taxa Média", value: `${stats.avgRate}€/h`,  color: "text-blue-600 dark:text-blue-400", icon: "💶" },
+          ].map(k => (
+            <div key={k.label} className="rounded-2xl border border-border/50 p-4 bg-card space-y-1">
+              <span className="text-lg">{k.icon}</span>
+              <p className={`text-2xl font-black leading-none ${k.color}`}>{k.value}</p>
+              <p className="text-xs font-semibold text-muted-foreground/60">{k.label}</p>
+            </div>
+          ))}
         </div>
 
         {/* Search + Filtro */}

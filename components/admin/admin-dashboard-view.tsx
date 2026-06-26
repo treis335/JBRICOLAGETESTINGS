@@ -482,15 +482,15 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
         />
 
         {/* ── KPI Grid ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 stagger-children">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 stagger-children">
           <KpiCard accent="purple" icon={<Clock className="h-4 w-4" />}
-            label="Horas (Mês)" value={`${stats.totalHours.toFixed(1)}h`}
-            sub={`${stats.active} colaborador${stats.active !== 1 ? "es" : ""} ativo${stats.active !== 1 ? "s" : ""}`}
+            label="Horas do Mês" value={`${stats.totalHours.toFixed(0)}h`}
+            sub={`${stats.active} ativo${stats.active !== 1 ? "s" : ""} de ${stats.total}`}
             sparkValues={stats.sparkHours}
           />
           <KpiCard accent="emerald" icon={<Euro className="h-4 w-4" />}
-            label="Custo (Mês)" value={`${stats.totalCost.toFixed(0)} €`}
-            sub="Taxa histórica por entrada"
+            label="Custo do Mês" value={`${stats.totalCost.toFixed(0)}€`}
+            sub="Calculado por entrada"
             sparkValues={stats.sparkCost}
             onClick={() => go("finance")}
           />
