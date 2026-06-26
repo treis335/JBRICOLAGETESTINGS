@@ -84,7 +84,7 @@ function FotoRow({ label, fotos, accent }: { label: string; fotos: any[]; accent
           "text-[9px] font-black uppercase tracking-widest shrink-0 w-8",
           accent === "sky" ? "text-sky-500" : "text-emerald-500"
         )}>{label}</span>
-        <div className="flex gap-1 min-w-0">
+        <div className="flex gap-1 min-w-0 overflow-hidden flex-nowrap">
           {fotos.slice(0, MAX).map((f:any, i:number) => (
             <button key={f.publicId ?? i} type="button" onClick={() => setLb(i)}
               className="relative w-8 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0 group">
@@ -123,7 +123,7 @@ function CollabCard({ collab, todayKey, onClick }: { collab: any; todayKey: stri
 
   return (
     <div className={cn(
-      "rounded-2xl border overflow-hidden transition-all",
+      "rounded-2xl border overflow-hidden transition-all w-full min-w-0",
       worked ? "bg-card border-border/50" : "bg-muted/15 border-border/20"
     )}>
       {/* Row */}
@@ -144,14 +144,14 @@ function CollabCard({ collab, todayKey, onClick }: { collab: any; todayKey: stri
             {collab.name}
           </p>
           {worked ? (
-            <div className="flex items-center gap-2 flex-wrap mt-0.5 min-w-0">
+            <div className="flex items-center gap-2 mt-0.5 min-w-0 overflow-hidden">
               <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 shrink-0">
                 <Clock className="h-3 w-3" />{horas.toFixed(1)}h
               </span>
               {obras.length > 0 && (
-                <span className="flex items-center gap-1 text-[11px] text-muted-foreground/50 min-w-0">
+                <span className="flex items-center gap-1 text-[11px] text-muted-foreground/50 min-w-0 overflow-hidden">
                   <HardHat className="h-2.5 w-2.5 shrink-0" />
-                  <span className="truncate">{obras[0]}{obras.length > 1 ? ` +${obras.length-1}` : ""}</span>
+                  <span className="truncate max-w-[120px]">{obras[0]}{obras.length > 1 ? ` +${obras.length-1}` : ""}</span>
                 </span>
               )}
             </div>
@@ -259,7 +259,7 @@ export function TodayPanel() {
   )
 
   return (
-    <div className="rounded-3xl bg-card border border-border/40 overflow-hidden shadow-sm w-full max-w-full">
+    <div className="rounded-3xl bg-card border border-border/40 overflow-hidden shadow-sm w-full max-w-full" style={{contain:"paint"}}>
 
       {/* ── Header ── */}
       <div className="relative overflow-hidden">
@@ -351,7 +351,7 @@ export function TodayPanel() {
 
       {/* ── Cards ── */}
       {!collapsed && (
-        <div className="p-3 space-y-2 min-w-0 overflow-hidden">
+        <div className="p-3 space-y-2 min-w-0 overflow-x-hidden w-full">
           {worked.map(c => (
             <CollabCard key={c.id} collab={c} todayKey={todayKey}
               onClick={() => router.push(`/admin/collaborator/${c.id}`)} />
