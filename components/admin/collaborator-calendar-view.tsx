@@ -450,20 +450,24 @@ export function CollaboratorCalendarView({
 
       {/* ── MOBILE ── */}
       <div className="md:hidden space-y-5">
-        <div className="flex items-center justify-between">
-          <button onClick={() => handleMonthChange("prev")} className="w-9 h-9 flex items-center justify-center rounded-xl border bg-card hover:bg-muted transition-colors">
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <h2 className="text-base font-semibold capitalize tracking-tight">{monthLabel}</h2>
-          <button onClick={() => handleMonthChange("next")} className="w-9 h-9 flex items-center justify-center rounded-xl border bg-card hover:bg-muted transition-colors">
-            <ChevronRight className="h-4 w-4" />
-          </button>
+        <div className="flex items-center gap-2">
+          {/* Nav prev/month/next */}
+          <div className="flex items-center gap-1 flex-1 min-w-0">
+            <button onClick={() => handleMonthChange("prev")} className="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl border bg-card hover:bg-muted transition-colors">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <h2 className="flex-1 text-sm font-bold capitalize tracking-tight text-center truncate">{monthLabel}</h2>
+            <button onClick={() => handleMonthChange("next")} className="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl border bg-card hover:bg-muted transition-colors">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          {/* Relatório button */}
           <button
             onClick={() => setReportModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 h-9 rounded-xl border bg-card hover:bg-muted transition-colors text-xs font-medium text-foreground"
+            className="shrink-0 flex items-center gap-1.5 px-2.5 h-9 rounded-xl border bg-card hover:bg-muted transition-colors text-xs font-medium text-foreground"
           >
             <FileText className="h-3.5 w-3.5" />
-            Relatório
+            <span className="hidden xs:inline">Relatório</span>
           </button>
         </div>
 
