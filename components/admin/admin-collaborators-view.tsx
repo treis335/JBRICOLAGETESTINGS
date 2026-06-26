@@ -51,7 +51,7 @@ function ConfirmSuspendDialog({
               <ShieldOff className="h-7 w-7 text-red-500" />
             </div>
           </div>
-          <div className="px-6 pb-2 text-center">
+          <div className="px-4 pb-2 text-center">
             <p className="text-base font-bold">Inativar {collaborator.name}?</p>
             <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
               O colaborador perde o acesso imediatamente. Os dados e histórico ficam preservados.
@@ -96,7 +96,7 @@ function ConfirmReactivateDialog({
               <UserCheck className="h-7 w-7 text-emerald-500" />
             </div>
           </div>
-          <div className="px-6 pb-2 text-center">
+          <div className="px-4 pb-2 text-center">
             <p className="text-base font-bold">Reativar {collaborator.name}?</p>
             <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
               O colaborador recupera o acesso imediatamente.
@@ -518,12 +518,12 @@ export function AdminCollaboratorsView() {
 
   return (
     <ScrollArea className="h-full animate-fade-in w-full">
-      <div className="w-full max-w-5xl mx-auto px-3 sm:px-6 md:px-8 py-6 pb-24 space-y-6">
+      <div className="w-full max-w-5xl mx-auto px-3 sm:px-5 py-4 pb-24 space-y-4">
 
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Colaboradores</h1>
+            <h1 className="text-xl md:text-2xl font-black tracking-tight">Colaboradores</h1>
             <p className="text-sm text-muted-foreground mt-1">
               {stats.ativos} ativo{stats.ativos !== 1 ? "s" : ""}
               {stats.suspensos > 0 && ` · ${stats.suspensos} suspenso${stats.suspensos !== 1 ? "s" : ""}`}
@@ -615,8 +615,8 @@ export function AdminCollaboratorsView() {
 
         {/* Desktop Table - Com Telemóvel */}
         {filtered.length > 0 && (
-          <div className="hidden lg:block rounded-2xl border bg-card overflow-hidden">
-            <div className="grid grid-cols-[2.4fr_1.3fr_1fr_auto] gap-4 px-6 py-4 bg-muted/50 border-b text-xs font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="hidden xl:block rounded-2xl border bg-card overflow-hidden">
+            <div className="grid grid-cols-[2fr_1fr_auto_auto] gap-3 px-4 py-3.5 bg-muted/50 border-b text-xs font-bold text-muted-foreground uppercase tracking-wider">
               <div>Colaborador</div>
               <div>Contacto</div>
               <div>Taxa Horária</div>
@@ -627,7 +627,7 @@ export function AdminCollaboratorsView() {
                 <div
                   key={collab.id}
                   className={cn(
-                    "grid grid-cols-[2.4fr_1.3fr_1fr_auto] gap-4 px-6 py-4 items-center hover:bg-muted/30 transition-colors",
+                    "grid grid-cols-[2fr_1fr_auto_auto] gap-3 px-4 py-3.5 items-center hover:bg-muted/30 transition-colors",
                     !collab.ativo && "opacity-75"
                   )}
                 >
@@ -687,7 +687,7 @@ export function AdminCollaboratorsView() {
 
         {/* Mobile Cards */}
         {filtered.length > 0 && (
-          <div className="lg:hidden space-y-3">
+          <div className="xl:hidden space-y-3">
             {filtered.map((collab) => (
               <CollabCard
                 key={collab.id}
