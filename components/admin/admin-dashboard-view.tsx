@@ -219,7 +219,8 @@ function FinanceSummaryCard({
 
 // ─── Collaborator row ─────────────────────────────────────────────────────────
 function CollabRow({ collab, rank, maxHours, onClick }: {
-  collab: import("@/hooks/useCollaborators").Collaborator & { _monthHours: number; _monthCost: number }; rank: number; maxHours: number; onClick: () => void
+  collab: import("@/hooks/useCollaborators").Collaborator & { _monthHours: number; _monthCost: number }
+  rank: number; maxHours: number; onClick: () => void
 }) {
   const pct = maxHours > 0 ? (collab._monthHours / maxHours) * 100 : 0
   const rankColors = [
@@ -434,8 +435,8 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
               <LayoutDashboard className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Painel de Administração</h1>
-              <p className="text-sm text-muted-foreground mt-0.5 capitalize">Visão geral · {monthLabel}</p>
+              <h1 className="text-xl md:text-3xl font-black tracking-tight">Painel Admin</h1>
+              <p className="text-xs text-muted-foreground/70 mt-0.5 capitalize">{monthLabel}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -470,6 +471,9 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
           </div>
         )}
 
+        {/* ── Painel de Hoje ── */}
+        <TodayPanel collaborators={collaborators} />
+
         {/* ── Resumo Financeiro Global ── */}
         <FinanceSummaryCard
           totalPending={stats.financeGlobal.totalPendingAll}
@@ -479,15 +483,15 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
         />
 
         {/* ── KPI Grid ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 stagger-children">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 stagger-children">
           <KpiCard accent="purple" icon={<Clock className="h-4 w-4" />}
-            label="Horas (Mês)" value={`${stats.totalHours.toFixed(1)}h`}
-            sub={`${stats.active} colaborador${stats.active !== 1 ? "es" : ""} ativo${stats.active !== 1 ? "s" : ""}`}
+            label="Horas do Mês" value={`${stats.totalHours.toFixed(0)}h`}
+            sub={`${stats.active} ativo${stats.active !== 1 ? "s" : ""} de ${stats.total}`}
             sparkValues={stats.sparkHours}
           />
           <KpiCard accent="emerald" icon={<Euro className="h-4 w-4" />}
-            label="Custo (Mês)" value={`${stats.totalCost.toFixed(0)} €`}
-            sub="Taxa histórica por entrada"
+            label="Custo do Mês" value={`${stats.totalCost.toFixed(0)}€`}
+            sub="Calculado por entrada"
             sparkValues={stats.sparkCost}
             onClick={() => go("finance")}
           />

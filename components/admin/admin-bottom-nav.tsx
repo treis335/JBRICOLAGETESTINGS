@@ -16,7 +16,7 @@ const tabs = [
   { id: "collaborators" as AdminTabType, label: "Equipa",     icon: Users           },
   { id: "obras"         as AdminTabType, label: "Obras",      icon: HardHat         },
   { id: "finance"       as AdminTabType, label: "Finanças",   icon: Euro            },
-  { id: "reports"       as AdminTabType, label: "Relatórios", icon: FileText        },
+  { id: "reports"       as AdminTabType, label: "Relat.", icon: FileText        },
   { id: "settings"      as AdminTabType, label: "Config.",    icon: Settings        },
 ]
 
@@ -29,8 +29,8 @@ export function AdminBottomNav({ activeTab, onTabChange }: AdminBottomNavProps) 
         style={{ WebkitBackdropFilter: "blur(20px)" }}
       />
 
-      <div className="relative grid grid-cols-6 max-w-2xl mx-auto px-1 pb-safe"
-           style={{ height: "64px" }}>
+      <div className="relative grid grid-cols-6 max-w-2xl mx-auto px-0.5 pb-safe"
+           style={{ height: "60px" }}>
         {tabs.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id

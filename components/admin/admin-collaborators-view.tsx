@@ -316,7 +316,7 @@ function BankInfoSection({ collab }: { collab: CollaboratorExtended }) {
   )
 }
 
-// ─── Collab Card (Mobile) ─────────────────────────────────────────────────────
+// ─── Collab Card (Mobile + tablet) ───────────────────────────────────────────
 function CollabCard({
   collab,
   onStatusToggled,
@@ -328,71 +328,73 @@ function CollabCard({
   modoGestao: boolean
   onViewDetail: () => void
 }) {
-  const initials = collab.name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase()
+  const initials = collab.name.split(" ").filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase()
+  const palettes = ["from-blue-500 to-indigo-600","from-emerald-500 to-teal-600","from-violet-500 to-purple-600","from-orange-500 to-amber-500","from-pink-500 to-rose-600","from-cyan-500 to-blue-500"]
+  const palette  = palettes[collab.name.charCodeAt(0) % palettes.length]
 
   return (
     <div className={cn(
       "rounded-2xl border bg-card overflow-hidden transition-all w-full",
-      !collab.ativo ? "border-l-4 border-l-red-400 opacity-80" : "border-l-4 border-l-emerald-400"
+      !collab.ativo ? "opacity-70 border-border/40" : "border-border/50 hover:border-border/80 hover:shadow-sm"
     )}>
-      <div className="px-4 pt-4 pb-3 flex items-center gap-3">
-        {collab.fotoUrl ? (
-          <img src={collab.fotoUrl} alt={collab.name} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/20" />
-        ) : (
-          <div className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold shrink-0",
-            !collab.ativo ? "bg-red-100 text-red-500 dark:bg-red-950/40" : "bg-primary/10 text-primary"
-          )}>
-            {initials}
-          </div>
-        )}
+      {/* Main info row */}
+      <div className="px-4 pt-4 pb-3 flex items-center gap-3 min-w-0">
+        {/* Avatar */}
+        <div className="relative shrink-0">
+          {collab.fotoUrl ? (
+            <img src={collab.fotoUrl} alt={collab.name} className="w-11 h-11 rounded-2xl object-cover" />
+          ) : (
+            <div className={cn("w-11 h-11 rounded-2xl bg-gradient-to-br text-white font-black text-sm flex items-center justify-center", palette)}>
+              {initials}
+            </div>
+          )}
+          <span className={cn(
+            "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-background",
+            collab.ativo ? "bg-emerald-500" : "bg-red-400"
+          )} />
+        </div>
 
+        {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-bold text-sm truncate">{collab.name}</p>
-            <StatusBadge collab={collab} />
+            <p className="font-bold text-sm truncate leading-tight">{collab.name}</p>
           </div>
-          <div className="flex items-center gap-1 mt-0.5 min-w-0">
-            <Mail className="h-3 w-3 text-muted-foreground/40 shrink-0" />
-            <p className="text-xs text-muted-foreground truncate">{collab.email}</p>
-          </div>
+          <p className="text-xs text-muted-foreground truncate mt-0.5">{collab.email}</p>
           {collab.telemovel && (
-            <div className="flex items-center gap-1 min-w-0">
+            <div className="flex items-center gap-1 mt-0.5 min-w-0">
               <Phone className="h-3 w-3 text-muted-foreground/40 shrink-0" />
               <p className="text-xs text-muted-foreground truncate flex-1 min-w-0">{collab.telemovel}</p>
               <CopyButton value={collab.telemovel} />
             </div>
           )}
         </div>
+
+        {/* Rate pill */}
+        <div className="shrink-0 text-right">
+          <p className={cn("text-base font-black tabular-nums leading-none", collab.currentRate > 0 ? "text-foreground" : "text-muted-foreground/40")}>
+            {collab.currentRate > 0 ? `${collab.currentRate}€` : "—"}
+          </p>
+          <p className="text-[10px] text-muted-foreground/50 mt-0.5">/hora</p>
+        </div>
       </div>
 
+      {/* Suspended notice */}
       {!collab.ativo && (
-        <div className="mx-4 mb-3 px-3 py-2 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-800/30">
-          <p className="text-xs text-red-600 dark:text-red-400 font-medium text-center">
-            Acesso suspenso · dados preservados
-          </p>
+        <div className="mx-4 mb-3 px-3 py-2 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200/40 dark:border-red-800/30 flex items-center gap-2">
+          <ShieldOff className="h-3.5 w-3.5 text-red-500 shrink-0" />
+          <p className="text-xs text-red-600 dark:text-red-400 font-semibold">Acesso suspenso · dados preservados</p>
         </div>
       )}
 
-      {/* Taxa Horária */}
-      <div className="mx-4 mb-3 px-4 py-3 bg-muted/40 rounded-xl flex items-center gap-3">
-        <Euro className="h-4 w-4 text-muted-foreground shrink-0" />
-        <div>
-          <p className="text-[10px] text-muted-foreground/60 font-medium">Taxa horária</p>
-          <p className="text-sm font-semibold tabular-nums">
-            {collab.currentRate > 0 ? `${collab.currentRate.toFixed(2)} €/h` : "Não definida"}
-          </p>
-        </div>
-      </div>
-
+      {/* Actions */}
       <div className="px-4 pb-4 flex gap-2 border-t border-border/15 pt-3">
         <ToggleSuspendButton collaborator={collab} onToggled={onStatusToggled} modoGestao={modoGestao} />
         <Button
           onClick={onViewDetail}
           disabled={!collab.ativo}
-          className="flex-1 h-10 bg-primary hover:bg-primary/90 text-sm font-semibold disabled:opacity-50"
+          className="flex-1 h-10 rounded-xl text-sm font-semibold disabled:opacity-40"
         >
-          <Eye className="h-4 w-4 mr-2" /> Ver Detalhes
+          <Eye className="h-4 w-4 mr-1.5" /> Detalhes
         </Button>
       </div>
 
@@ -469,8 +471,10 @@ export function AdminCollaboratorsView() {
     .sort((a, b) => a.name.localeCompare(b.name, "pt"))
 
   const stats = {
-    ativos: extended.filter(c => c.ativo).length,
-    suspensos: extended.filter(c => !c.ativo).length,
+    ativos:          extended.filter(c => c.ativo).length,
+    suspensos:       extended.filter(c => !c.ativo).length,
+    totalPendingAll: collaborators.reduce((s, col) => s + (col.pendingAmount || 0), 0),
+    avgRate:         collaborators.length > 0 ? Math.round(collaborators.reduce((s, col) => s + (col.currentRate || 0), 0) / collaborators.length) : 0,
   }
 
   const handleStatusToggled = useCallback((id: string, newAtivo: boolean) => {
@@ -551,15 +555,19 @@ export function AdminCollaboratorsView() {
         </div>
 
         {/* KPI */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border p-5 bg-card">
-            <p className="text-sm text-muted-foreground">Total de Colaboradores</p>
-            <p className="text-3xl font-bold mt-1">{stats.ativos + stats.suspensos}</p>
-          </div>
-          <div className="rounded-2xl border p-5 bg-card">
-            <p className="text-sm text-muted-foreground">Colaboradores Ativos</p>
-            <p className="text-3xl font-bold mt-1 text-emerald-600">{stats.ativos}</p>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[
+            { label: "Total",    value: stats.ativos + stats.suspensos, color: "text-foreground",                      icon: "👥" },
+            { label: "Ativos",   value: stats.ativos,                   color: "text-emerald-600 dark:text-emerald-400", icon: "✅" },
+            { label: "Inativos", value: stats.suspensos,                color: stats.suspensos > 0 ? "text-red-500 dark:text-red-400" : "text-muted-foreground/50", icon: "⛔" },
+            { label: "Taxa Média", value: `${stats.avgRate}€/h`,  color: "text-blue-600 dark:text-blue-400", icon: "💶" },
+          ].map(k => (
+            <div key={k.label} className="rounded-2xl border border-border/50 p-4 bg-card space-y-1">
+              <span className="text-lg">{k.icon}</span>
+              <p className={`text-2xl font-black leading-none ${k.color}`}>{k.value}</p>
+              <p className="text-xs font-semibold text-muted-foreground/60">{k.label}</p>
+            </div>
+          ))}
         </div>
 
         {/* Search + Filtro */}
