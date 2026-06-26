@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils"
 import { useCollaborators } from "@/hooks/useCollaborators"
 import {
   Clock, HardHat, CheckCircle2, AlertCircle,
-  ChevronRight, Camera, ZoomIn, X,
-  ChevronLeft, ChevronDown, Sun, Users2,
+  ChevronRight, ChevronLeft, Camera, ZoomIn, X,
+  ChevronDown, Sun, Users2,
 } from "lucide-react"
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -212,9 +212,21 @@ export function TodayPanel() {
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
 
-  const today    = new Date()
-  const todayKey = toKey(today)
-  const dayLabel = today.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })
+  const today        = new Date()
+  const todayReal    = toKey(today)
+  const [selectedDate, setSelectedDate] = useState<Date>(today)
+  const todayKey  = toKey(selectedDate)
+  const isToday   = todayKey === todayReal
+
+  const dayLabel  = selectedDate.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })
+
+  const goDay = (dir: -1 | 1) => {
+    setSelectedDate(d => {
+      const next = new Date(d)
+      next.setDate(next.getDate() + dir)
+      return next
+    })
+  }
 
   const { worked, idle, totalH, totalF } = useMemo(() => {
     const active = collaborators.filter(c => c.ativo !== false)
@@ -257,17 +269,34 @@ export function TodayPanel() {
 
         <div className="relative px-4 pt-4 pb-4 min-w-0 overflow-hidden">
           {/* Top row */}
-          <div className="flex items-start justify-between gap-2 mb-4 min-w-0">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="relative shrink-0">
-                <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                <div className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-50" />
-              </div>
-              <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-4 min-w-0">
+            {/* Prev day */}
+            <button onClick={() => goDay(-1)}
+              className="w-8 h-8 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center transition-all shrink-0">
+              <ChevronLeft className="h-4 w-4 text-white/50" />
+            </button>
+
+            {/* Date label */}
+            <div className="flex-1 min-w-0 text-center">
+              <div className="flex items-center justify-center gap-1.5 min-w-0">
+                {isToday && (
+                  <div className="relative shrink-0">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <div className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-50" />
+                  </div>
+                )}
                 <p className="text-white/90 text-sm font-black capitalize truncate">{dayLabel}</p>
-                <p className="text-white/30 text-[10px]">Vista em tempo real</p>
               </div>
+              <p className="text-white/30 text-[10px]">{isToday ? "hoje · tempo real" : "histórico"}</p>
             </div>
+
+            {/* Next day — disabled if today */}
+            <button onClick={() => goDay(1)} disabled={isToday}
+              className="w-8 h-8 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center transition-all shrink-0 disabled:opacity-25 disabled:pointer-events-none">
+              <ChevronRight className="h-4 w-4 text-white/50" />
+            </button>
+
+            {/* Collapse */}
             <button onClick={() => setCollapsed(c => !c)}
               className="w-8 h-8 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center transition-all shrink-0">
               <ChevronDown className={cn("h-4 w-4 text-white/40 transition-transform duration-300", collapsed && "rotate-180")} />
