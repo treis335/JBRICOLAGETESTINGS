@@ -14,6 +14,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import { cn, fmt, resolveEntryTaxa } from "@/lib/utils"
 import type { AdminTabType } from "@/components/admin/admin-bottom-nav"
+import { TodayPanel } from "@/components/admin/today-panel"
 
 // Extended collaborator with computed month data
 interface CollabWithMonth {
