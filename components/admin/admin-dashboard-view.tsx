@@ -219,7 +219,8 @@ function FinanceSummaryCard({
 
 // ─── Collaborator row ─────────────────────────────────────────────────────────
 function CollabRow({ collab, rank, maxHours, onClick }: {
-  collab: import("@/hooks/useCollaborators").Collaborator & { _monthHours: number; _monthCost: number }; rank: number; maxHours: number; onClick: () => void
+  collab: import("@/hooks/useCollaborators").Collaborator & { _monthHours: number; _monthCost: number }
+  rank: number; maxHours: number; onClick: () => void
 }) {
   const pct = maxHours > 0 ? (collab._monthHours / maxHours) * 100 : 0
   const rankColors = [
@@ -434,8 +435,8 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
               <LayoutDashboard className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Painel de Administração</h1>
-              <p className="text-sm text-muted-foreground mt-0.5 capitalize">Visão geral · {monthLabel}</p>
+              <h1 className="text-xl md:text-3xl font-black tracking-tight">Painel Admin</h1>
+              <p className="text-xs text-muted-foreground/70 mt-0.5 capitalize">{monthLabel}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

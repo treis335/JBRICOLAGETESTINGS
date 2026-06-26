@@ -910,7 +910,7 @@ export function AdminObrasView() {
   const fmtDate = (iso: string) => new Date(iso).toLocaleDateString("pt-PT", { day: "2-digit", month: "short", year: "numeric" })
   
   if (loading) return (
-    <div className="p-4 space-y-3 animate-pulse">
+    <div className="p-3 space-y-3 animate-pulse">
       <div className="flex gap-2 mb-4">
         <div className="skeleton h-10 flex-1 rounded-xl" />
         <div className="skeleton h-10 w-10 rounded-xl" />
