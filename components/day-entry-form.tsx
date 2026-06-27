@@ -622,7 +622,7 @@ export function DayEntryForm({ date, open, onClose }: DayEntryFormProps) {
                           <Textarea
                             value={s.descricao}
                             onChange={e => updateService(s.id, { descricao: e.target.value })}
-                            placeholder="Ex: Colocação de azulejos na casa de banho, montagem de armários, pintura de paredes..."
+                            placeholder="O que foi feito..."
                             className="min-h-[96px] bg-background border-border/45 rounded-xl text-sm resize-none focus-visible:ring-primary/20 leading-relaxed"
                           />
                         </div>
