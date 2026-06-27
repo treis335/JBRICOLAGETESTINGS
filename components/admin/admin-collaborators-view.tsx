@@ -11,12 +11,12 @@ import {
   Eye, X, Loader2, Mail, Phone,
   UserX, UserCheck, ShieldOff, Lock, Unlock,
   CreditCard, ChevronDown, ChevronUp, Zap, ZapOff,
-  Building2, Hash, Info, Copy, CheckCircle2,
+  Building2, Hash, Info, Copy, CheckCircle2, Trash2, AlertTriangle,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { useCollaborators, type Collaborator } from "@/hooks/useCollaborators"
-import { doc, setDoc, getDoc } from "firebase/firestore"
+import { doc, setDoc, getDoc, deleteDoc, collection, getDocs } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { cn } from "@/lib/utils"
 
@@ -123,6 +123,56 @@ function ConfirmReactivateDialog({
 }
 
 // ─── Status Badge ─────────────────────────────────────────────────────────────
+
+function ConfirmDeleteDialog({
+  collaborator,
+  onConfirm,
+  onCancel,
+  deleting,
+}: {
+  collaborator: CollaboratorExtended
+  onConfirm: () => void
+  onCancel: () => void
+  deleting: boolean
+}) {
+  return (
+    <>
+      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onCancel} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-sm rounded-3xl bg-card border border-border/50 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="flex justify-center pt-7 pb-4">
+            <div className="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
+              <Trash2 className="h-7 w-7 text-red-500" />
+            </div>
+          </div>
+          <div className="px-5 pb-2 text-center space-y-2">
+            <p className="text-base font-bold">Eliminar {collaborator.name}?</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Esta ação é <strong>irreversível</strong>. Serão apagados todos os dados, registos de horas, pagamentos e conta do utilizador.
+            </p>
+            <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-2xl px-3 py-2.5 text-left mt-2">
+              <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed">
+                Referências a este colaborador em registos de outros (equipa, serviços) serão mantidas como texto histórico.
+              </p>
+            </div>
+          </div>
+          <div className="p-5 grid grid-cols-2 gap-3">
+            <button onClick={onCancel} disabled={deleting}
+              className="h-11 rounded-2xl border border-border/50 text-sm font-semibold hover:bg-muted/50 transition-colors disabled:opacity-50">
+              Cancelar
+            </button>
+            <button onClick={onConfirm} disabled={deleting}
+              className="h-11 rounded-2xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+              {deleting ? <><Loader2 className="h-4 w-4 animate-spin" />A eliminar…</> : <><Trash2 className="h-4 w-4" />Eliminar</>}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
 function StatusBadge({ collab }: { collab: CollaboratorExtended }) {
   if (!collab.ativo) {
     return (
@@ -317,6 +367,54 @@ function BankInfoSection({ collab }: { collab: CollaboratorExtended }) {
 }
 
 // ─── Collab Card (Mobile + tablet) ───────────────────────────────────────────
+
+function DeleteButton({ collaborator, onDone }: { collaborator: CollaboratorExtended; onDone: () => void }) {
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [deleting, setDeleting]       = useState(false)
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      // 1. Delete main user document (workData, entries, payments inside it)
+      await deleteDoc(doc(db, "users", collaborator.id))
+      // 2. Delete any sub-collections if they exist
+      const subcols = ["payments", "entries", "workData"]
+      for (const sub of subcols) {
+        try {
+          const snap = await getDocs(collection(db, "users", collaborator.id, sub))
+          await Promise.all(snap.docs.map(d => deleteDoc(d.ref)))
+        } catch {}
+      }
+      setShowConfirm(false)
+      onDone()
+    } catch (err) {
+      console.error("Erro ao eliminar utilizador:", err)
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  return (
+    <>
+      <button
+        onClick={() => setShowConfirm(true)}
+        className="flex items-center gap-2 px-3 h-9 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-xs font-semibold hover:bg-red-100 dark:hover:bg-red-950/40 transition-colors"
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+        Eliminar
+      </button>
+      {showConfirm && (
+        <ConfirmDeleteDialog
+          collaborator={collaborator}
+          onConfirm={handleDelete}
+          onCancel={() => setShowConfirm(false)}
+          deleting={deleting}
+        />
+      )}
+    </>
+  )
+}
+
 function CollabCard({
   collab,
   onStatusToggled,
