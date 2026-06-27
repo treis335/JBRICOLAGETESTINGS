@@ -71,6 +71,25 @@ export function resolveRateForDate(
   return currentRate
 }
 
+
+/** Safely converts a Firestore Timestamp, ISO string, or null → "YYYY-MM-DD" | null */
+function toISODate(val: any): string | null {
+  if (!val) return null
+  // Firestore Timestamp object
+  if (typeof val === "object" && typeof val.toDate === "function") {
+    return val.toDate().toISOString().slice(0, 10)
+  }
+  // Plain number (epoch ms)
+  if (typeof val === "number") {
+    return new Date(val).toISOString().slice(0, 10)
+  }
+  // Already a string
+  if (typeof val === "string") {
+    return val.slice(0, 10) || null
+  }
+  return null
+}
+
 export function useCollaborators() {
   const [collaborators, setCollaborators] = useState<Collaborator[]>([])
   const [loading,       setLoading]       = useState(true)
@@ -124,7 +143,7 @@ export function useCollaborators() {
 
         // If no history but currentRate > 0, synthesise one from createdAt
         if (rateHistory.length === 0 && currentRate > 0) {
-          rateHistory.push({ rate: currentRate, date: d.createdAt?.slice(0,10) || "2024-01-01" })
+          rateHistory.push({ rate: currentRate, date: toISODate(d.createdAt) || "2024-01-01" })
         }
 
         // ── Month aggregation ───────────────────────────────────────────────
@@ -162,7 +181,7 @@ export function useCollaborators() {
           totalHoursThisMonth: totalHoursThis,
           totalHoursAllTime:   totalHoursAll,
           totalCostThisMonth:  totalCostThis,
-          role: d.role || "worker", createdAt: d.createdAt || null,
+          role: d.role || "worker", createdAt: toISODate(d.createdAt),
           migrated: d.migrated || false, ativo, pendingAmount,
           entries, payments: rawPayments,
         })
