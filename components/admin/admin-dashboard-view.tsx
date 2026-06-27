@@ -3,7 +3,6 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Users, Clock, Euro, TrendingUp, ChevronLeft, ChevronRight,
   RefreshCw, AlertTriangle, CheckCircle2, ArrowUpRight, Zap,
@@ -425,8 +424,8 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
   if (!stats) return null
 
   return (
-    <ScrollArea className="h-full w-full" style={{overflowX:"hidden"}}>
-      <div className="px-3 sm:px-5 py-4 pb-24 md:py-8 md:pb-12 space-y-6 max-w-7xl mx-auto" style={{overflow:"hidden", width:"100%"}}>
+    <div className="h-full w-full overflow-x-hidden overflow-y-auto">
+      <div className="px-3 sm:px-5 py-4 pb-24 md:py-8 md:pb-12 space-y-6 max-w-7xl mx-auto w-full overflow-x-hidden">
 
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -653,6 +652,6 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
         </div>
 
       </div>
-    </ScrollArea>
+    </div>
   )
 }
