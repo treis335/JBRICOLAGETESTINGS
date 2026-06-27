@@ -80,7 +80,18 @@ export function useCollaborators() {
     setLoading(true)
     setError(null)
     try {
-      const snap = await getDocs(query(collection(db, "users"), where("role", "==", "worker")))
+      // Try filtered query first; if index missing, fall back to full scan
+      let snap
+      try {
+        snap = await getDocs(query(collection(db, "users"), where("role", "==", "worker")))
+      } catch (indexErr: any) {
+        console.warn("⚠️ Index query failed, falling back to full scan:", indexErr?.message)
+        const allSnap = await getDocs(collection(db, "users"))
+        // Filter in memory
+        const workerDocs = allSnap.docs.filter(d => d.data().role === "worker")
+        snap = { docs: workerDocs } as any
+      }
+
       const list: Collaborator[] = []
 
       for (const doc of snap.docs) {
@@ -163,8 +174,16 @@ export function useCollaborators() {
       })
 
       setCollaborators(list)
-    } catch (err) {
-      setError("Erro ao carregar colaboradores.")
+    } catch (err: any) {
+      console.error("❌ useCollaborators error:", err?.code, err?.message, err)
+      // Firebase missing index error
+      if (err?.code === "failed-precondition" || err?.message?.includes("index")) {
+        setError("Índice Firebase em falta. Verifica a consola para o link de criação.")
+      } else if (err?.code === "permission-denied") {
+        setError("Sem permissão para ler utilizadores. Verifica as regras Firestore.")
+      } else {
+        setError(`Erro ao carregar colaboradores: ${err?.message || "desconhecido"}`)
+      }
     } finally {
       setLoading(false)
     }

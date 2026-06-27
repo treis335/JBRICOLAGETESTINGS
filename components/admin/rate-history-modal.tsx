@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { X, Download, TrendingUp, TrendingDown, Minus, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { useCollaborators } from "@/hooks/useCollaborators"
+import type { Collaborator } from "@/hooks/useCollaborators"
 import { buildRateRows, fmtCurrency, downloadCSV, type RateRow } from "@/lib/report-utils"
 
 function DeltaBadge({ delta }: { delta?: number }) {
@@ -26,11 +26,10 @@ function DeltaBadge({ delta }: { delta?: number }) {
   )
 }
 
-interface Props { open: boolean; onClose: () => void }
+interface Props { open: boolean; onClose: () => void; collaborators: Collaborator[] }
 
-export function RateHistoryModal({ open, onClose }: Props) {
+export function RateHistoryModal({ open, onClose, collaborators }: Props) {
   const [search, setSearch] = useState("")
-  const { collaborators, loading } = useCollaborators()
 
   const rows: RateRow[] = useMemo(
     () => buildRateRows(collaborators),
@@ -85,7 +84,7 @@ export function RateHistoryModal({ open, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3.5 border-b bg-muted/10 shrink-0">
           <p className="text-sm font-black flex-1">Histórico de Taxas</p>
-          <Button size="sm" variant="outline" className="h-8 rounded-xl gap-1.5 text-xs" onClick={handleCSV} disabled={loading || !filtered.length}>
+          <Button size="sm" variant="outline" className="h-8 rounded-xl gap-1.5 text-xs" onClick={handleCSV} disabled={false || !filtered.length}>
             <Download className="h-3.5 w-3.5" /> CSV
           </Button>
           <Button size="icon" variant="ghost" className="h-8 w-8 rounded-xl" onClick={onClose}>
@@ -97,7 +96,7 @@ export function RateHistoryModal({ open, onClose }: Props) {
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4 min-h-0">
 
           {/* Summary cards */}
-          {!loading && summary.length > 0 && (
+          {!false && summary.length > 0 && (
             <div className="space-y-1.5">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Resumo atual por colaborador</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -134,7 +133,7 @@ export function RateHistoryModal({ open, onClose }: Props) {
           </div>
 
           {/* Log */}
-          {loading ? (
+          {false ? (
             <div className="space-y-2 animate-pulse">
               {[...Array(6)].map((_,i) => <div key={i} className="h-14 bg-muted/40 rounded-xl" />)}
             </div>

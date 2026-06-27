@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, X, Download, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useCollaborators } from "@/hooks/useCollaborators"
+import type { Collaborator } from "@/hooks/useCollaborators"
 import {
   buildMonthRows, fmtMonthLabel, fmtCurrency, downloadCSV, monthKey,
   type MonthRow,
@@ -53,11 +53,10 @@ function SummaryCard({ label, value, sub, accent }: { label: string; value: stri
 }
 
 // ── main ──────────────────────────────────────────────────────────────────────
-interface Props { open: boolean; onClose: () => void }
+interface Props { open: boolean; onClose: () => void; collaborators: Collaborator[] }
 
-export function MonthlyReportModal({ open, onClose }: Props) {
+export function MonthlyReportModal({ open, onClose, collaborators }: Props) {
   const [monthK, setMonthK] = useState(todayMonthKey)
-  const { collaborators, loading } = useCollaborators()
   const isCurrentMonth = monthK === todayMonthKey()
 
   const rows: MonthRow[] = useMemo(
@@ -106,7 +105,7 @@ export function MonthlyReportModal({ open, onClose }: Props) {
 
           <div className="flex-1" />
 
-          <Button size="sm" variant="outline" className="h-8 rounded-xl gap-1.5 text-xs" onClick={handleCSV} disabled={loading || !rows.length}>
+          <Button size="sm" variant="outline" className="h-8 rounded-xl gap-1.5 text-xs" onClick={handleCSV} disabled={false || !rows.length}>
             <Download className="h-3.5 w-3.5" /> CSV
           </Button>
           <Button size="icon" variant="ghost" className="h-8 w-8 rounded-xl shrink-0" onClick={onClose}>
@@ -145,7 +144,7 @@ export function MonthlyReportModal({ open, onClose }: Props) {
           </div>
 
           {/* Table */}
-          {loading ? (
+          {false ? (
             <div className="space-y-2 animate-pulse">
               {[...Array(4)].map((_,i) => <div key={i} className="h-12 bg-muted/40 rounded-xl" />)}
             </div>

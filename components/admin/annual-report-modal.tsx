@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, X, Download, TrendingUp, TrendingDown, Minus } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useCollaborators } from "@/hooks/useCollaborators"
+import type { Collaborator } from "@/hooks/useCollaborators"
 import { buildAnnualRows, fmtCurrency, downloadCSV, type AnnualRow } from "@/lib/report-utils"
 
 const MONTHS_SHORT = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"]
@@ -27,11 +27,10 @@ function MiniBar({ value, max, color }: { value: number; max: number; color: str
   )
 }
 
-interface Props { open: boolean; onClose: () => void }
+interface Props { open: boolean; onClose: () => void; collaborators: Collaborator[] }
 
-export function AnnualReportModal({ open, onClose }: Props) {
+export function AnnualReportModal({ open, onClose, collaborators }: Props) {
   const [year, setYear] = useState(new Date().getFullYear())
-  const { collaborators, loading } = useCollaborators()
 
   const rows: AnnualRow[] = useMemo(
     () => buildAnnualRows(collaborators, year),
@@ -84,7 +83,7 @@ export function AnnualReportModal({ open, onClose }: Props) {
             </Button>
           </div>
           <div className="flex-1" />
-          <Button size="sm" variant="outline" className="h-8 rounded-xl gap-1.5 text-xs" onClick={handleCSV} disabled={loading || !rows.length}>
+          <Button size="sm" variant="outline" className="h-8 rounded-xl gap-1.5 text-xs" onClick={handleCSV} disabled={false || !rows.length}>
             <Download className="h-3.5 w-3.5" /> CSV
           </Button>
           <Button size="icon" variant="ghost" className="h-8 w-8 rounded-xl" onClick={onClose}>
@@ -135,7 +134,7 @@ export function AnnualReportModal({ open, onClose }: Props) {
           </div>
 
           {/* Per-collaborator table */}
-          {loading ? (
+          {false ? (
             <div className="space-y-2 animate-pulse">
               {[...Array(4)].map((_,i) => <div key={i} className="h-16 bg-muted/40 rounded-xl" />)}
             </div>
