@@ -304,7 +304,7 @@ export function MonthlyReportModal({ open, onClose }: MonthlyReportModalProps) {
               <p className="text-sm font-medium">Sem registos para {monthLabel}</p>
             </div>
           ) : (
-            <table className="w-full text-sm min-w-[640px]">
+            <table className="w-full text-sm" style={{ minWidth: "min(640px, 100%)" }}>
               <thead className="sticky top-0 bg-muted/60 backdrop-blur-sm">
                 <tr className="border-b border-border/30">
                   <th className="text-left text-[11px] font-bold uppercase tracking-wide text-muted-foreground py-2.5 pl-5 pr-3">Colaborador</th>

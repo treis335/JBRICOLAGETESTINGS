@@ -103,8 +103,8 @@ function AdminContent() {
       <AdminSideNav activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Main Content */}
-      <div className="flex-1 min-w-0 lg:pl-64 overflow-hidden">
-        <main className="flex-1 pb-16 lg:pb-0">
+      <div className="flex-1 min-w-0 lg:pl-64 overflow-x-hidden">
+        <main className="w-full min-w-0 pb-16 lg:pb-0 overflow-x-hidden">
           <AdminTabPane active={activeTab === "dashboard"}>
             <AdminDashboardView onTabChange={setActiveTab} />
           </AdminTabPane>

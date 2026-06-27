@@ -377,7 +377,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
   }, [collaborators, monthKey, selectedMonth, selectedYear, NOW_KEY])
 
   if (loading) return (
-    <div className="p-4 pb-24 md:p-8 space-y-6 max-w-7xl mx-auto animate-pulse">
+    <div className="p-3 sm:p-4 pb-24 space-y-4 max-w-7xl mx-auto animate-pulse">
       {/* KPI skeleton */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[...Array(4)].map((_, i) => (
@@ -411,7 +411,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
   )
 
   if (error) return (
-    <div className="p-6 flex items-center justify-center min-h-[300px]">
+    <div className="p-4 flex items-center justify-center min-h-[300px]">
       <div className="text-center space-y-4 max-w-sm">
         <div className="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-950/30 flex items-center justify-center mx-auto">
           <AlertTriangle className="h-7 w-7 text-red-500" />

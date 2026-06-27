@@ -511,7 +511,7 @@ function DetailPanel({ collab, selectedMonthKey, onClose, onPay, onDeletePayment
   }
 
   return (
-    <div className="w-full xl:w-[380px] shrink-0 border-l bg-card flex flex-col overflow-hidden">
+    <div className="w-full xl:w-80 shrink-0 xl:border-l bg-card flex flex-col overflow-hidden">
       {panelContent}
     </div>
   )
@@ -721,7 +721,7 @@ export function AdminFinanceView() {
   if (loading) return (
     <div className="p-4 space-y-4 animate-pulse max-w-5xl mx-auto">
       {/* KPI skeleton */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[...Array(4)].map((_, i) => (
           <div key={i} className="rounded-2xl border bg-card p-4 space-y-2">
             <div className="skeleton h-8 w-8 rounded-xl" />
@@ -796,7 +796,7 @@ export function AdminFinanceView() {
             )}
 
             {/* KPIs */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { icon: <Euro className="h-4 w-4" />, label: "Custo do mês", value: fmt(kpis.cost), sub: `${kpis.active} ativos`, color: "text-blue-600 dark:text-blue-400", iconCls: "bg-blue-100 dark:bg-blue-900/40 text-blue-600", cardCls: "border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/10" },
                 { icon: <CheckCircle2 className="h-4 w-4" />, label: "Pago (mês)", value: fmt(kpis.paid), sub: kpis.cost > 0 ? `${Math.round((kpis.paid / kpis.cost) * 100)}% do custo` : "—", color: "text-emerald-600 dark:text-emerald-400", iconCls: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600", cardCls: "border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/10" },

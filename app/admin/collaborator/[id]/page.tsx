@@ -847,8 +847,8 @@ export default function CollaboratorDetailPage() {
             </div>
 
             {/* ── KPI Grid ── */}
-            <div className="px-4 pb-6 md:px-8 overflow-x-hidden">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 min-w-0">
+            <div className="px-3 sm:px-5 pb-6 overflow-x-hidden">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 min-w-0">
                 {kpis.map((kpi) => {
                   const c    = colorMap[kpi.color]
                   const Icon = kpi.icon
@@ -882,7 +882,7 @@ export default function CollaboratorDetailPage() {
             </div>
 
             {/* ── Tabs ── */}
-            <div className="pb-10 overflow-x-hidden min-w-0">
+            <div className="pb-10 overflow-x-hidden min-w-0 w-full">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full min-w-0">
                 <div className="px-4 md:px-8"><TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex h-11 rounded-xl bg-muted/50 p-1 mb-6 gap-0.5">
                   {tabs.map(({ value, label, Icon }) => (
