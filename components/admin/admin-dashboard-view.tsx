@@ -471,7 +471,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
         )}
 
         {/* ── Painel de Hoje ── */}
-        <TodayPanel />
+        <TodayPanel collaborators={collaborators} />
 
         {/* ── Resumo Financeiro Global ── */}
         <FinanceSummaryCard
