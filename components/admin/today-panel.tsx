@@ -122,11 +122,11 @@ function CollabCard({ collab, dateKey }: { collab: Collaborator; dateKey: string
   const [lb, setLb]     = useState<{ fotos: (ServiceFoto & { svc?:string })[]; idx:number }|null>(null)
 
   const entry    = collab.entries?.find(e => e.date === dateKey) ?? null
-  const horas    = entry?.totalHoras ?? 0
-  const extras   = entry?.extraHoras ?? 0
+  const horas    = Number(entry?.totalHoras ?? 0)
+  const extras   = Number(entry?.extraHoras ?? 0)
   const normais  = entry?.normalHoras ?? 0
-  const taxa     = entry ? resolveEntryTaxa(entry, collab.currentRate) : collab.currentRate
-  const valor    = horas * taxa
+  const taxa     = Number(entry ? resolveEntryTaxa(entry, collab.currentRate) : (collab.currentRate ?? 0))
+  const valor    = Number(horas) * Number(taxa)
   const services = Array.isArray(entry?.services) && entry!.services!.length > 0
     ? entry!.services! : []
   const obras    = [...new Set(services.map(s => s.obraNome).filter(Boolean))]
@@ -165,10 +165,10 @@ function CollabCard({ collab, dateKey }: { collab: Collaborator; dateKey: string
                 <>
                   <span className={cn("text-[11px] font-black tabular-nums shrink-0",
                     extras > 0 ? "text-orange-400" : "text-emerald-400")}>
-                    {horas.toFixed(1)}h
+                    {Number(horas || 0).toFixed(1)}h
                   </span>
                   {valor > 0 && (
-                    <span className="text-[11px] text-white/25 tabular-nums shrink-0">{valor.toFixed(0)}€</span>
+                    <span className="text-[11px] text-white/25 tabular-nums shrink-0">{Number(valor || 0).toFixed(0)}€</span>
                   )}
                   {obras[0] && (
                     <span className="text-[11px] text-white/30 truncate flex items-center gap-1 min-w-0">
@@ -222,7 +222,7 @@ function CollabCard({ collab, dateKey }: { collab: Collaborator; dateKey: string
                 )}
                 {valor > 0 && (
                   <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/15 text-[11px] font-black text-emerald-400 ml-auto">
-                    <Euro className="h-3 w-3" />{valor.toFixed(2)}€
+                    <Euro className="h-3 w-3" />{Number(valor || 0).toFixed(2)}€
                   </span>
                 )}
               </div>
@@ -352,8 +352,8 @@ export function TodayPanel({ collaborators }: { collaborators: Collaborator[] })
   const active   = collaborators.filter(c => c.ativo !== false)
   const worked   = active.filter(c => c.entries?.some(e => e.date === dateKey))
   const absent   = active.filter(c => !c.entries?.some(e => e.date === dateKey))
-  const totalH   = worked.reduce((s,c) => { const e=c.entries?.find(e=>e.date===dateKey); return s+(e?.totalHoras??0) }, 0)
-  const totalCost= worked.reduce((s,c) => { const e=c.entries?.find(e=>e.date===dateKey); if(!e)return s; return s+(e.totalHoras??0)*resolveEntryTaxa(e,c.currentRate) }, 0)
+  const totalH   = worked.reduce((s,c) => { const e=c.entries?.find((e:any)=>e.date===dateKey); return s+Number(e?.totalHoras??0) }, 0)
+  const totalCost= worked.reduce((s,c) => { const e=c.entries?.find((e:any)=>e.date===dateKey); if(!e)return s; return s+Number(e.totalHoras??0)*Number(resolveEntryTaxa(e,c.currentRate)||0) }, 0)
   const totalF   = worked.reduce((s,c) => { const e=c.entries?.find(e=>e.date===dateKey); return s+(e?.services??[]).flatMap((sv:any)=>sv.fotos??[]).length }, 0)
   const pct      = active.length > 0 ? Math.round((worked.length/active.length)*100) : 0
 
@@ -416,8 +416,8 @@ export function TodayPanel({ collaborators }: { collaborators: Collaborator[] })
         <div className="relative grid grid-cols-4 gap-1.5">
           {[
             { label:"Em campo",  value:`${worked.length}/${active.length}`, icon:Users2,  color:"text-emerald-400", sub:`${pct}%` },
-            { label:"Horas",     value:`${totalH.toFixed(1)}h`,             icon:Clock,   color:"text-sky-400",     sub:"total" },
-            { label:"Custo",     value:`${totalCost.toFixed(0)}€`,          icon:Euro,    color:"text-violet-400",  sub:"est." },
+            { label:"Horas",     value:`${Number(totalH || 0).toFixed(1)}h`,             icon:Clock,   color:"text-sky-400",     sub:"total" },
+            { label:"Custo",     value:`${Number(totalCost || 0).toFixed(0)}€`,          icon:Euro,    color:"text-violet-400",  sub:"est." },
             { label:"Fotos",     value:`${totalF}`,                         icon:Camera,  color:"text-pink-400",    sub:"upload" },
           ].map(({ label, value, icon:Icon, color, sub }) => (
             <div key={label} className="rounded-xl bg-white/3 border border-white/6 px-2 py-2.5 text-center min-w-0 overflow-hidden">
