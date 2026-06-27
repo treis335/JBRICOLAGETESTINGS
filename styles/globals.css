@@ -177,3 +177,9 @@ div[class*="menu"] a,
 div[class*="menu"] button {
   cursor: pointer;
 }
+
+/* ── Prevenir overflow horizontal global ──────────────────────────────────── */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}

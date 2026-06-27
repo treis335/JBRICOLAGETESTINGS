@@ -45,6 +45,8 @@ function AdminTabPane({ active, children }: { active: boolean; children: React.R
     <div style={{
       display: active ? undefined : "none",
       animation: active ? "fade-in-up 0.25s cubic-bezier(0.16,1,0.3,1) both" : "none",
+      overflowX: "hidden",
+      width: "100%",
     }}>
       {children}
     </div>
@@ -97,14 +99,14 @@ function AdminContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex overflow-x-hidden w-full">
 
       {/* Desktop Sidebar */}
       <AdminSideNav activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Main Content */}
-      <div className="flex-1 min-w-0 lg:pl-64 overflow-x-hidden">
-        <main className="w-full min-w-0 pb-16 lg:pb-0 overflow-x-hidden">
+      <div className="flex-1 min-w-0 lg:pl-64" style={{overflowX:"hidden", maxWidth:"100%"}}>
+        <main className="w-full pb-16 lg:pb-0" style={{overflowX:"hidden", minWidth:0}}>
           <AdminTabPane active={activeTab === "dashboard"}>
             <AdminDashboardView onTabChange={setActiveTab} />
           </AdminTabPane>
