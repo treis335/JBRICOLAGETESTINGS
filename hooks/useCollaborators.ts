@@ -1,43 +1,41 @@
 // hooks/useCollaborators.ts
-/**
- * Hook personalizado para buscar e gerir colaboradores do Firebase
- *
- * Funcionalidades:
- * - Busca todos os users com role "worker"
- * - Expõe campo `ativo` (boolean, default true) para soft-disable
- * - Calcula horas totais do mês atual
- * - Calcula horas de todo o histórico
- * - Calcula custo do mês usando a taxa histórica de cada entry ✅
- * - Busca array de payments (pagamentos)
- * - Busca array de entries completo (para relatórios)
- * - Retorna estado de loading e erro
- * - Fornece função refetch para atualizar dados
- *
- * ✅ NOME: usa sempre `username` (campo editável pelo user nas Definições).
- *    Fallback para `name` (campo legado) e depois "Sem nome".
- */
-
 import { useState, useEffect } from "react"
 import { collection, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
+export interface RateHistoryEntry {
+  rate: number
+  date: string   // ISO "YYYY-MM-DD" — dia a partir do qual esta taxa vigorou
+  note?: string
+}
+
+export interface Payment {
+  id: string
+  date: string
+  valor: number
+  metodo: string
+}
+
 export interface Collaborator {
   id: string
-  /** Nome resolvido — sempre `username` se existir, senão `name` legado */
   name: string
-  /** Campo raw do Firestore — nome editável pelo user nas Definições */
   username: string
-  /** Campo raw legado — usado apenas como fallback */
   legacyName: string
   email: string
+  photoURL?: string
   currentRate: number
+  /** Histórico ordenado do mais antigo para o mais recente */
+  rateHistory: RateHistoryEntry[]
   totalHoursThisMonth: number
   totalHoursAllTime: number
+  totalCostThisMonth: number
   role: string
   createdAt: string | null
   migrated?: boolean
   ativo: boolean
+  pendingAmount: number
   entries: import("@/lib/types").DayEntry[]
+<<<<<<< HEAD
   payments: Array<{
     id: string
     date: string
@@ -46,97 +44,155 @@ export interface Collaborator {
   }>
   totalCostThisMonth: number
   rateHistory: Array<{ taxa: number; taxaAnterior: number | null; data: string; alteradoPor: string; motivo?: string }>
+=======
+  payments: Payment[]
+>>>>>>> 3a5b66b859f3a0b5609fab17915379d15e1752c7
 }
 
-interface UseCollaboratorsReturn {
-  collaborators: Collaborator[]
-  loading: boolean
-  error: string | null
-  refetch: () => Promise<void>
-}
-
-function resolveEntryTaxa(entry: any, currentRate: number): number {
-  if (typeof entry.taxaHoraria === "number" && entry.taxaHoraria > 0)
-    return entry.taxaHoraria
-  if (Array.isArray(entry.services) && entry.services.length > 0) {
-    const s0Taxa = entry.services[0]?.taxaHoraria
-    if (typeof s0Taxa === "number" && s0Taxa > 0) return s0Taxa
-  }
-  return currentRate
-}
-
-/**
- * Resolve o nome de exibição de um user.
- * Prioridade: username (editável pelo user) → name (legado) → "Sem nome"
- */
 function resolveDisplayName(userData: any): string {
   const username = (userData.username || "").trim()
-  const name = (userData.name || "").trim()
+  const name     = (userData.name     || "").trim()
   return username || name || "Sem nome"
 }
 
-export function useCollaborators(): UseCollaboratorsReturn {
+/** Resolve a taxa correcta para uma data de entrada usando o histórico */
+export function resolveRateForDate(
+  dateISO: string,
+  rateHistory: RateHistoryEntry[],
+  currentRate: number,
+  entryTaxa?: number
+): number {
+  // 1. Se a própria entrada guardou a taxa, usamos essa (mais preciso)
+  if (typeof entryTaxa === "number" && entryTaxa > 0) return entryTaxa
+
+  // 2. Tenta resolver via rateHistory
+  if (rateHistory.length > 0) {
+    // Ordena por data crescente
+    const sorted = [...rateHistory].sort((a, b) => a.date.localeCompare(b.date))
+    // Última entrada cuja data seja <= à data da entrada
+    let resolved = sorted[0].rate
+    for (const r of sorted) {
+      if (r.date <= dateISO) resolved = r.rate
+      else break
+    }
+    return resolved
+  }
+
+  // 3. Fallback para taxa actual
+  return currentRate
+}
+
+
+/** Safely converts a Firestore Timestamp, ISO string, or null → "YYYY-MM-DD" | null */
+function toISODate(val: any): string | null {
+  if (!val) return null
+  // Firestore Timestamp object
+  if (typeof val === "object" && typeof val.toDate === "function") {
+    return val.toDate().toISOString().slice(0, 10)
+  }
+  // Plain number (epoch ms)
+  if (typeof val === "number") {
+    return new Date(val).toISOString().slice(0, 10)
+  }
+  // Already a string
+  if (typeof val === "string") {
+    return val.slice(0, 10) || null
+  }
+  return null
+}
+
+export function useCollaborators() {
   const [collaborators, setCollaborators] = useState<Collaborator[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [loading,       setLoading]       = useState(true)
+  const [error,         setError]         = useState<string | null>(null)
 
   const fetchCollaborators = async () => {
     setLoading(true)
     setError(null)
-
     try {
-      const usersRef = collection(db, "users")
-      const workersQuery = query(usersRef, where("role", "==", "worker"))
-      const usersSnapshot = await getDocs(workersQuery)
-      const collabsData: Collaborator[] = []
+      // Try filtered query first; if index missing, fall back to full scan
+      let snap
+      try {
+        snap = await getDocs(query(collection(db, "users"), where("role", "==", "worker")))
+      } catch (indexErr: any) {
+        console.warn("⚠️ Index query failed, falling back to full scan:", indexErr?.message)
+        const allSnap = await getDocs(collection(db, "users"))
+        // Filter in memory
+        const workerDocs = allSnap.docs.filter(d => d.data().role === "worker")
+        snap = { docs: workerDocs } as any
+      }
 
-      for (const userDoc of usersSnapshot.docs) {
-        const userData = userDoc.data()
-        const userId = userDoc.id
+      const list: Collaborator[] = []
 
-        const now = new Date()
-        const currentMonth = now.getMonth()
-        const currentYear = now.getFullYear()
+      for (const doc of snap.docs) {
+        const d      = doc.data()
+        const uid    = doc.id
+        const ativo  = d.ativo !== false
+        const name   = resolveDisplayName(d)
 
+<<<<<<< HEAD
         const entries = userData.workData?.entries || []
         const currentRate = userData.workData?.settings?.taxaHoraria || 0
         const ativo: boolean = userData.ativo !== false
         const rateHistory = Array.isArray(userData.rateHistory) ? userData.rateHistory : []
+=======
+        const entries    = d.workData?.entries   || []
+        const currentRate = d.workData?.settings?.taxaHoraria || 0
+        const rawPayments: Payment[] = (d.workData?.payments || []).map((p: any) => ({
+          id:     p.id     || "",
+          date:   p.date   || "",
+          valor:  p.valor  || 0,
+          metodo: p.metodo || "Desconhecido",
+        }))
+>>>>>>> 3a5b66b859f3a0b5609fab17915379d15e1752c7
 
-        // ✅ Nome resolvido: username primeiro, depois name legado
-        const displayName = resolveDisplayName(userData)
+        // ── Rate history ────────────────────────────────────────────────────
+        // Pode estar em: d.rateHistory, d.workData.rateHistory ou campo taxaHistory
+        const rawHistory: any[] =
+          d.rateHistory          ||
+          d.workData?.rateHistory ||
+          d.taxaHistory          ||
+          []
 
-        let totalHoursThisMonth = 0
-        let totalHoursAllTime = 0
-        let totalCostThisMonth = 0
+        const rateHistory: RateHistoryEntry[] = rawHistory
+          .filter((r: any) => r && typeof r.rate === "number" && r.date)
+          .map((r: any) => ({ rate: r.rate, date: r.date, note: r.note }))
+          .sort((a, b) => a.date.localeCompare(b.date))
 
-        entries.forEach((entry: any) => {
-          const entryDate = entry.date
-          const totalHoras = entry.totalHoras || 0
+        // If no history but currentRate > 0, synthesise one from createdAt
+        if (rateHistory.length === 0 && currentRate > 0) {
+          rateHistory.push({ rate: currentRate, date: toISODate(d.createdAt) || "2024-01-01" })
+        }
 
-          totalHoursAllTime += totalHoras
+        // ── Month aggregation ───────────────────────────────────────────────
+        const now          = new Date()
+        const curMonth     = now.getMonth()
+        const curYear      = now.getFullYear()
+        let totalHoursThis = 0, totalHoursAll = 0, totalCostThis = 0
 
-          if (entryDate) {
-            try {
-              const [year, month] = entryDate.split("-").map(Number)
-              if (year === currentYear && month - 1 === currentMonth) {
-                totalHoursThisMonth += totalHoras
-                totalCostThisMonth += totalHoras * resolveEntryTaxa(entry, currentRate)
-              }
-            } catch (e) {
-              console.warn(`⚠️ Data inválida para entrada: ${entryDate}`)
+        entries.forEach((e: any) => {
+          const h = e.totalHoras || 0
+          totalHoursAll += h
+          if (e.date) {
+            const [y, m] = e.date.split("-").map(Number)
+            if (y === curYear && m - 1 === curMonth) {
+              totalHoursThis  += h
+              const rate = resolveRateForDate(e.date, rateHistory, currentRate, e.taxaHoraria)
+              totalCostThis   += h * rate
             }
           }
         })
 
-        const payments = userData.workData?.payments || []
-        const formattedPayments = payments.map((p: any) => ({
-          id: p.id || "",
-          date: p.date || "",
-          valor: p.valor || 0,
-          metodo: p.metodo || "Desconhecido",
-        }))
+        // ── Pending amount (ALL time, not just this month) ──────────────────
+        const totalPaid    = rawPayments.reduce((s, p) => s + p.valor, 0)
+        const totalEarned  = entries.reduce((s: number, e: any) => {
+          const h    = e.totalHoras || 0
+          const rate = resolveRateForDate(e.date || "", rateHistory, currentRate, e.taxaHoraria)
+          return s + h * rate
+        }, 0)
+        const pendingAmount = Math.max(0, totalEarned - totalPaid)
 
+<<<<<<< HEAD
         collabsData.push({
           id: userId,
           name: displayName,           // ✅ sempre username se existir
@@ -154,34 +210,42 @@ export function useCollaborators(): UseCollaboratorsReturn {
           payments: formattedPayments,
           totalCostThisMonth,
           rateHistory,
+=======
+        list.push({
+          id: uid, name, username: d.username || "", legacyName: d.name || "",
+          email: d.email || "", photoURL: d.photoURL,
+          currentRate, rateHistory,
+          totalHoursThisMonth: totalHoursThis,
+          totalHoursAllTime:   totalHoursAll,
+          totalCostThisMonth:  totalCostThis,
+          role: d.role || "worker", createdAt: toISODate(d.createdAt),
+          migrated: d.migrated || false, ativo, pendingAmount,
+          entries, payments: rawPayments,
+>>>>>>> 3a5b66b859f3a0b5609fab17915379d15e1752c7
         })
-
-        console.log(
-          `${ativo ? "✅" : "🔴"} ${displayName} (uid: ${userId}): ${totalHoursThisMonth.toFixed(1)}h este mês, custo ${totalCostThisMonth.toFixed(2)}€, ativo: ${ativo}`
-        )
       }
 
-      collabsData.sort((a, b) => {
+      list.sort((a, b) => {
         if (a.ativo !== b.ativo) return a.ativo ? -1 : 1
         return a.name.localeCompare(b.name, "pt")
       })
 
-      setCollaborators(collabsData)
-    } catch (err) {
-      setError("Erro ao carregar colaboradores. Verifica a consola para mais detalhes.")
+      setCollaborators(list)
+    } catch (err: any) {
+      console.error("❌ useCollaborators error:", err?.code, err?.message, err)
+      // Firebase missing index error
+      if (err?.code === "failed-precondition" || err?.message?.includes("index")) {
+        setError("Índice Firebase em falta. Verifica a consola para o link de criação.")
+      } else if (err?.code === "permission-denied") {
+        setError("Sem permissão para ler utilizadores. Verifica as regras Firestore.")
+      } else {
+        setError(`Erro ao carregar colaboradores: ${err?.message || "desconhecido"}`)
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => {
-    fetchCollaborators()
-  }, [])
-
-  return {
-    collaborators,
-    loading,
-    error,
-    refetch: fetchCollaborators,
-  }
+  useEffect(() => { fetchCollaborators() }, [])
+  return { collaborators, loading, error, refetch: fetchCollaborators }
 }
