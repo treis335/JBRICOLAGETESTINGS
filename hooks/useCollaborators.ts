@@ -45,6 +45,7 @@ export interface Collaborator {
     metodo: string
   }>
   totalCostThisMonth: number
+  rateHistory: Array<{ taxa: number; taxaAnterior: number | null; data: string; alteradoPor: string; motivo?: string }>
 }
 
 interface UseCollaboratorsReturn {
@@ -100,6 +101,7 @@ export function useCollaborators(): UseCollaboratorsReturn {
         const entries = userData.workData?.entries || []
         const currentRate = userData.workData?.settings?.taxaHoraria || 0
         const ativo: boolean = userData.ativo !== false
+        const rateHistory = Array.isArray(userData.rateHistory) ? userData.rateHistory : []
 
         // ✅ Nome resolvido: username primeiro, depois name legado
         const displayName = resolveDisplayName(userData)
@@ -151,6 +153,7 @@ export function useCollaborators(): UseCollaboratorsReturn {
           entries,
           payments: formattedPayments,
           totalCostThisMonth,
+          rateHistory,
         })
 
         console.log(

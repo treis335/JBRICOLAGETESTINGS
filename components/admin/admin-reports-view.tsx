@@ -2,182 +2,241 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  FileText, Download, Calendar, BarChart3,
-  TrendingUp, Clock, FileSpreadsheet, FileBarChart
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { MonthlyReportModal } from "@/components/admin/monthly-report-modal"
+import { Calendar, BarChart3, History, Clock, FileSpreadsheet, FileBarChart, Download, ChevronRight, Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { MonthlyReportModal }  from "@/components/admin/monthly-report-modal"
+import { AnnualReportModal }   from "@/components/admin/annual-report-modal"
+import { RateHistoryModal }    from "@/components/admin/rate-history-modal"
 
-const reports = [
+// ── Report definitions ────────────────────────────────────────────────────────
+const REPORTS = [
   {
-    icon: <Calendar className="h-5 w-5" />,
+    id: "monthly",
+    icon: Calendar,
     title: "Relatório Mensal",
-    description: "Resumo de horas e custos por colaborador no mês atual.",
-    color: "blue",
-    tags: ["Horas", "Custos", "Colaboradores"],
-    format: "Excel / PDF",
+    description: "Horas, custos e pagamentos por colaborador. Taxa histórica correta, pendente real.",
+    gradient: "from-blue-500 to-indigo-600",
+    glow: "shadow-blue-500/20",
+    badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+    tags: ["Horas", "Custos", "Pendente"],
+    formats: ["Excel", "PDF"],
+    ready: true,
   },
   {
-    icon: <BarChart3 className="h-5 w-5" />,
+    id: "annual",
+    icon: BarChart3,
     title: "Relatório Anual",
-    description: "Análise completa do ano fiscal com tendências e comparações mensais.",
-    color: "purple",
+    description: "Análise do ano completo com tendências mensais e ranking de colaboradores.",
+    gradient: "from-violet-500 to-purple-600",
+    glow: "shadow-violet-500/20",
+    badge: "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20",
     tags: ["Anual", "Tendências", "KPIs"],
-    format: "Excel / PDF",
+    formats: ["Excel", "PDF"],
+    ready: true,
   },
   {
-    icon: <TrendingUp className="h-5 w-5" />,
+    id: "rates",
+    icon: History,
     title: "Histórico de Taxas",
-    description: "Registo de todas as alterações de taxas horárias por colaborador.",
-    color: "orange",
+    description: "Registo completo de todas as alterações de taxas horárias com auditoria.",
+    gradient: "from-amber-500 to-orange-500",
+    glow: "shadow-amber-500/20",
+    badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
     tags: ["Taxas", "Histórico", "Auditoria"],
-    format: "PDF",
+    formats: ["PDF"],
+    ready: true,
   },
   {
-    icon: <Clock className="h-5 w-5" />,
+    id: "hours",
+    icon: Clock,
     title: "Relatório de Horas",
-    description: "Detalhe de todas as entradas de horas com filtros por período.",
-    color: "green",
+    description: "Detalhe de todas as entradas de horas com filtros avançados por período e colaborador.",
+    gradient: "from-emerald-500 to-teal-500",
+    glow: "shadow-emerald-500/20",
+    badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
     tags: ["Horas", "Detalhado", "Filtros"],
-    format: "Excel",
+    formats: ["Excel"],
+    ready: false,
   },
   {
-    icon: <FileSpreadsheet className="h-5 w-5" />,
+    id: "export",
+    icon: FileSpreadsheet,
     title: "Exportação de Dados",
-    description: "Exportação completa dos dados para integração com sistemas externos.",
-    color: "slate",
+    description: "Exportação completa dos dados brutos para integração com sistemas externos.",
+    gradient: "from-slate-500 to-slate-600",
+    glow: "shadow-slate-500/20",
+    badge: "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20",
     tags: ["Raw Data", "CSV", "Integração"],
-    format: "CSV / JSON",
+    formats: ["CSV", "JSON"],
+    ready: false,
   },
   {
-    icon: <FileBarChart className="h-5 w-5" />,
+    id: "performance",
+    icon: FileBarChart,
     title: "Análise de Performance",
-    description: "Métricas de performance da equipa com comparação entre períodos.",
-    color: "rose",
+    description: "Métricas de performance da equipa com comparação entre períodos e evolução.",
+    gradient: "from-rose-500 to-pink-600",
+    glow: "shadow-rose-500/20",
+    badge: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
     tags: ["Performance", "Comparação", "KPIs"],
-    format: "PDF",
+    formats: ["PDF"],
+    ready: false,
   },
 ]
 
-const colorMap: Record<string, { card: string; icon: string; badge: string }> = {
-  blue:   { card: "border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700",   icon: "bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400",   badge: "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700" },
-  purple: { card: "border-purple-200 dark:border-purple-800 hover:border-purple-300 dark:hover:border-purple-700", icon: "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400", badge: "bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700" },
-  orange: { card: "border-orange-200 dark:border-orange-800 hover:border-orange-300 dark:hover:border-orange-700", icon: "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400", badge: "bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700" },
-  green:  { card: "border-emerald-200 dark:border-emerald-800 hover:border-emerald-300 dark:hover:border-emerald-700", icon: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400", badge: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700" },
-  slate:  { card: "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600",  icon: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400",  badge: "bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700" },
-  rose:   { card: "border-rose-200 dark:border-rose-800 hover:border-rose-300 dark:hover:border-rose-700",   icon: "bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400",   badge: "bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-700" },
+// ── Report Card ───────────────────────────────────────────────────────────────
+function ReportCard({ report, onClick }: { report: typeof REPORTS[0]; onClick?: () => void }) {
+  const Icon = report.icon
+  return (
+    <div className={cn(
+      "group relative rounded-3xl border bg-card overflow-hidden transition-all duration-200",
+      report.ready
+        ? "border-border/60 hover:border-border hover:shadow-lg cursor-pointer active:scale-[0.99]"
+        : "border-border/30 opacity-60"
+    )}
+      onClick={report.ready ? onClick : undefined}
+    >
+      {/* Top gradient bar */}
+      <div className={cn("h-1 w-full bg-gradient-to-r", report.gradient)} />
+
+      <div className="p-5 space-y-4">
+        {/* Icon + title */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className={cn(
+              "w-11 h-11 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg shrink-0",
+              report.gradient, report.glow
+            )}>
+              <Icon className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-bold leading-tight">{report.title}</p>
+              <div className="flex items-center gap-1 mt-1 flex-wrap">
+                {report.formats.map(f => (
+                  <span key={f} className={cn(
+                    "text-[10px] font-bold px-1.5 py-0.5 rounded-md border",
+                    report.badge
+                  )}>{f}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+          {report.ready ? (
+            <div className="w-8 h-8 rounded-xl bg-muted/50 group-hover:bg-muted flex items-center justify-center transition-colors shrink-0">
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+            </div>
+          ) : (
+            <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-muted text-muted-foreground/50 shrink-0 whitespace-nowrap">Em breve</span>
+          )}
+        </div>
+
+        {/* Description */}
+        <p className="text-[13px] text-muted-foreground leading-relaxed">{report.description}</p>
+
+        {/* Tags */}
+        <div className="flex gap-1.5 flex-wrap">
+          {report.tags.map(tag => (
+            <span key={tag} className="text-[11px] text-muted-foreground/50 bg-muted/40 px-2 py-0.5 rounded-lg font-medium">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* CTA */}
+        {report.ready && (
+          <div className={cn(
+            "flex items-center gap-2 pt-1 text-sm font-semibold transition-colors",
+            "text-muted-foreground group-hover:text-foreground"
+          )}>
+            <Download className="h-4 w-4" />
+            Gerar relatório
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
 
+// ── Main ──────────────────────────────────────────────────────────────────────
 export function AdminReportsView() {
-  const [showMonthlyReport, setShowMonthlyReport] = useState(false)
+  const [open, setOpen] = useState<string|null>(null)
 
   return (
     <>
-      <MonthlyReportModal open={showMonthlyReport} onClose={() => setShowMonthlyReport(false)} />
-    <ScrollArea className="h-full w-full">
-      <div className="px-3 sm:px-5 py-4 pb-24 md:py-8 md:pb-12 space-y-8 max-w-7xl mx-auto w-full">
+      <MonthlyReportModal open={open==="monthly"} onClose={()=>setOpen(null)} />
+      <AnnualReportModal  open={open==="annual"}  onClose={()=>setOpen(null)} />
+      <RateHistoryModal   open={open==="rates"}   onClose={()=>setOpen(null)} />
 
-        {/* ── Header ── */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center justify-center w-14 h-14 bg-primary/10 rounded-2xl border border-primary/20">
-              <FileText className="h-7 w-7 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Relatórios</h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Análises, exportações e relatórios da empresa
-              </p>
-            </div>
-          </div>
-          <Badge variant="secondary" className="self-start md:self-auto py-1.5 px-3">
-            <Clock className="h-3.5 w-3.5 mr-1.5" />
-            Funcionalidades em desenvolvimento
-          </Badge>
-        </div>
+      <div className="h-full w-full overflow-y-auto overflow-x-hidden">
+        <div className="px-4 sm:px-6 py-6 pb-28 md:py-10 md:pb-12 max-w-5xl mx-auto w-full space-y-8">
 
-        {/* ── Reports Grid ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {reports.map((report) => {
-            const colors = colorMap[report.color]
-            return (
-              <Card
-                key={report.title}
-                className={`group relative overflow-hidden transition-all duration-200 ${colors.card}`}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start gap-3">
-                    <div className={`p-2.5 rounded-xl shrink-0 ${colors.icon}`}>
-                      {report.icon}
+          {/* ── Hero header ── */}
+          <div className="relative rounded-3xl overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.2),transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(16,185,129,0.1),transparent_60%)]" />
+            <div className="relative px-6 py-7 sm:px-8 sm:py-8">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center">
+                      <Sparkles className="h-3.5 w-3.5 text-white/80" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base leading-snug">{report.title}</CardTitle>
-                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        {report.tags.map(tag => (
-                          <span
-                            key={tag}
-                            className={`inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-md border ${colors.badge}`}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                    <span className="text-white/40 text-[11px] font-bold uppercase tracking-widest">Centro de Relatórios</span>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {report.description}
+                  <h1 className="text-2xl sm:text-3xl font-black text-white/90 tracking-tight">Relatórios</h1>
+                  <p className="text-white/35 text-sm mt-1.5 max-w-md">
+                    Exporta, analisa e audita todos os dados da empresa em múltiplos formatos.
                   </p>
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs text-muted-foreground">
-                      Formato: <span className="font-medium text-foreground">{report.format}</span>
-                    </span>
-                    {report.title === "Relatório Mensal" ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowMonthlyReport(true)}
-                        className="h-8 gap-1.5 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/30"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                        Gerar
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled
-                        className="h-8 gap-1.5 opacity-60 cursor-not-allowed"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                        Em breve
-                      </Button>
-                    )}
+                </div>
+                <div className="shrink-0 hidden sm:flex flex-col items-end gap-1.5">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/25">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span className="text-[11px] font-bold text-emerald-400">3 disponíveis</span>
                   </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+                  <span className="text-white/20 text-[10px]">3 em breve</span>
+                </div>
+              </div>
 
-        {/* ── Info Banner ── */}
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
-          <span className="text-lg shrink-0">💡</span>
-          <div className="text-sm text-blue-900 dark:text-blue-200 space-y-1">
-            <p><strong>Em desenvolvimento:</strong> As funcionalidades de exportação e análise avançada estarão disponíveis em breve.</p>
-            <p className="text-blue-700/70 dark:text-blue-300/70 text-xs">
-              Poderá exportar dados em múltiplos formatos e configurar relatórios automáticos periódicos.
-            </p>
+              {/* Quick stats */}
+              <div className="grid grid-cols-3 gap-3 mt-6">
+                {[
+                  { label: "Mensal", desc: "Horas & custos", color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", id: "monthly" },
+                  { label: "Anual",  desc: "Tendências & KPIs", color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20", id: "annual" },
+                  { label: "Taxas",  desc: "Auditoria",  color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20", id: "rates" },
+                ].map(s => (
+                  <button key={s.id} onClick={() => setOpen(s.id)}
+                    className={cn("rounded-2xl border px-3 py-3 text-left hover:brightness-110 active:scale-95 transition-all", s.bg)}>
+                    <p className={cn("text-xs font-black", s.color)}>{s.label}</p>
+                    <p className="text-white/25 text-[10px] mt-0.5 truncate">{s.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
 
+          {/* ── Available reports ── */}
+          <div className="space-y-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 px-1">Disponíveis</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {REPORTS.filter(r => r.ready).map(r => (
+                <ReportCard key={r.id} report={r} onClick={() => setOpen(r.id)} />
+              ))}
+            </div>
+          </div>
+
+          {/* ── Coming soon ── */}
+          <div className="space-y-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 px-1">Em breve</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {REPORTS.filter(r => !r.ready).map(r => (
+                <ReportCard key={r.id} report={r} />
+              ))}
+            </div>
+          </div>
+
+        </div>
       </div>
-    </ScrollArea>
     </>
   )
 }
