@@ -425,8 +425,8 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
   if (!stats) return null
 
   return (
-    <ScrollArea className="h-full w-full">
-      <div className="px-3 sm:px-5 py-4 pb-24 md:py-8 md:pb-12 space-y-6 max-w-7xl mx-auto w-full">
+    <ScrollArea className="h-full w-full" style={{overflowX:"hidden"}}>
+      <div className="px-3 sm:px-5 py-4 pb-24 md:py-8 md:pb-12 space-y-6 max-w-7xl mx-auto" style={{overflow:"hidden", width:"100%"}}>
 
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -472,7 +472,7 @@ export function AdminDashboardView({ onTabChange }: { onTabChange?: (tab: AdminT
         )}
 
         {/* ── Painel de Hoje ── */}
-        <TodayPanel collaborators={collaborators} />
+        <TodayPanel />
 
         {/* ── Resumo Financeiro Global ── */}
         <FinanceSummaryCard

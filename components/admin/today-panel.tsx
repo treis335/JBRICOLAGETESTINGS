@@ -89,9 +89,9 @@ function CollabCard({ collab, todayKey }: { collab: any; todayKey: string }) {
 
   return (
     <>
-      <div className="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10 overflow-hidden w-full">
+      <div style={{borderRadius:"1rem", background:"linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))", border:"1px solid rgba(255,255,255,0.1)", overflow:"hidden", width:"100%"}}>
         {/* Main row */}
-        <div className="flex items-center gap-3 px-3.5 py-3 min-w-0">
+        <div className="flex items-center gap-3 px-3.5 py-3 w-full min-w-0 overflow-hidden">
           {/* Avatar */}
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-[11px] font-black text-white shrink-0 shadow-md shadow-emerald-500/20">
             {initials(collab.name)}
@@ -130,7 +130,7 @@ function CollabCard({ collab, todayKey }: { collab: any; todayKey: string }) {
 
         {/* Expandable */}
         {open && hasMore && (
-          <div className="border-t border-white/6 px-3.5 pb-3 pt-2.5 space-y-2.5 overflow-hidden">
+          <div className="border-t border-white/6 px-3.5 pb-3 pt-2.5 space-y-2.5 w-full" style={{overflow:"hidden"}}>
             {/* Equipa */}
             {equipa.length > 0 && (
               <div className="flex flex-wrap gap-1 min-w-0">
@@ -149,7 +149,7 @@ function CollabCard({ collab, todayKey }: { collab: any; todayKey: string }) {
                   .map(({ label, fotos, color }) => (
                     <div key={label} className="flex items-center gap-2 min-w-0 overflow-hidden">
                       <span className={cn("text-[9px] font-black uppercase tracking-widest shrink-0 w-9", color)}>{label}</span>
-                      <div className="flex gap-1 overflow-hidden">
+                      <div style={{display:"flex", gap:"4px", overflow:"hidden", maxWidth:"calc(100% - 40px)", flexShrink:1}}>
                         {fotos.slice(0,5).map((f:any, i:number) => (
                           <button key={f.publicId??i} type="button"
                             onClick={() => setLb({ fotos, idx: i })}
@@ -226,14 +226,13 @@ export function TodayPanel() {
   )
 
   return (
-    <div className="rounded-3xl overflow-hidden w-full max-w-full shadow-xl"
-      style={{background:"linear-gradient(135deg,#0f172a 0%,#1a2744 50%,#0f172a 100%)"}}>
+    <div className="rounded-3xl overflow-hidden w-full max-w-full shadow-xl" style={{overflow:"hidden", background:"linear-gradient(135deg,#0f172a 0%,#1a2744 50%,#0f172a 100%)"}}>
 
       {/* ── Header ── */}
-      <div className="relative px-4 pt-4 pb-4 overflow-hidden">
+      <div className="relative px-4 pt-4 pb-4" style={{overflow:"hidden"}}>
         {/* Subtle glow */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/8 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/6 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" style={{transform:"translate(25%,-25%)"}} />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/8 rounded-full blur-2xl pointer-events-none" style={{transform:"translate(-25%,25%)"}} />
 
         {/* Day navigator */}
         <div className="relative flex items-center gap-2 mb-4 min-w-0">
@@ -284,7 +283,7 @@ export function TodayPanel() {
 
       {/* ── Worked list ── */}
       {!collapsed && (
-        <div className="px-3 pb-3 space-y-1.5 overflow-x-hidden w-full">
+        <div className="px-3 pb-3 space-y-1.5" style={{overflow:"hidden", width:"100%"}}>
           {worked.length === 0 ? (
             <div className="py-8 text-center">
               <p className="text-sm text-white/20 font-medium">Sem registos para este dia</p>
