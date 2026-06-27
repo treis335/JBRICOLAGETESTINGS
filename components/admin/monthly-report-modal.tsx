@@ -37,13 +37,13 @@ async function exportPDF(rows: MonthRow[], monthKey: string, label: string) {
   doc.text(`Período: ${label}`, 14, 26); doc.text(`Gerado em: ${new Date().toLocaleDateString("pt-PT")}`, 14, 31)
   const totH=rows.reduce((s,r)=>s+r.totalHoras,0), totC=rows.reduce((s,r)=>s+r.custo,0), totP=rows.reduce((s,r)=>s+r.pago,0), totPend=rows.reduce((s,r)=>s+r.pendente,0)
   doc.setTextColor(0); doc.setFontSize(9)
-  doc.text(`${rows.length} colaboradores · ${totH.toFixed(1)}h · Custo: ${totC.toFixed(2)}€ · Pago: ${totP.toFixed(2)}€ · Pendente: ${totPend.toFixed(2)}€`, 14, 38)
+  doc.text(`${rows.length} colaboradores · ${(Number(totH)||0).toFixed(1)}h · Custo: ${(Number(totC)||0).toFixed(2)}€ · Pago: ${(Number(totP)||0).toFixed(2)}€ · Pendente: ${(Number(totPend)||0).toFixed(2)}€`, 14, 38)
   autoTable(doc, {
     startY:44,
     head:[["Colaborador","Taxa €/h","H. Norm.","H. Extra","Total H.","Custo","Pago","Pendente"]],
     body:[
-      ...rows.map(r=>[r.name,`${r.rate.toFixed(2)}€`,`${r.normalHoras.toFixed(1)}h`,`${r.extraHoras.toFixed(1)}h`,`${r.totalHoras.toFixed(1)}h`,`${r.custo.toFixed(2)}€`,`${r.pago.toFixed(2)}€`,`${r.pendente.toFixed(2)}€`]),
-      [{content:"TOTAL",styles:{fontStyle:"bold"}},"",{content:`${rows.reduce((s,r)=>s+r.normalHoras,0).toFixed(1)}h`,styles:{fontStyle:"bold"}},{content:`${rows.reduce((s,r)=>s+r.extraHoras,0).toFixed(1)}h`,styles:{fontStyle:"bold"}},{content:`${totH.toFixed(1)}h`,styles:{fontStyle:"bold"}},{content:`${totC.toFixed(2)}€`,styles:{fontStyle:"bold"}},{content:`${totP.toFixed(2)}€`,styles:{fontStyle:"bold"}},{content:`${totPend.toFixed(2)}€`,styles:{fontStyle:"bold"}}],
+      ...rows.map(r=>[r.name,`${(Number(r.rate)||0).toFixed(2)}€`,`${(Number(r.normalHoras)||0).toFixed(1)}h`,`${(Number(r.extraHoras)||0).toFixed(1)}h`,`${(Number(r.totalHoras)||0).toFixed(1)}h`,`${(Number(r.custo)||0).toFixed(2)}€`,`${(Number(r.pago)||0).toFixed(2)}€`,`${(Number(r.pendente)||0).toFixed(2)}€`]),
+      [{content:"TOTAL",styles:{fontStyle:"bold"}},"",{content:`${rows.reduce((s,r)=>s+(Number(r.normalHoras)||0),0).toFixed(1)}h`,styles:{fontStyle:"bold"}},{content:`${rows.reduce((s,r)=>s+(Number(r.extraHoras)||0),0).toFixed(1)}h`,styles:{fontStyle:"bold"}},{content:`${totH.toFixed(1)}h`,styles:{fontStyle:"bold"}},{content:`${totC.toFixed(2)}€`,styles:{fontStyle:"bold"}},{content:`${totP.toFixed(2)}€`,styles:{fontStyle:"bold"}},{content:`${totPend.toFixed(2)}€`,styles:{fontStyle:"bold"}}],
     ],
     styles:{fontSize:9,cellPadding:2.5},headStyles:{fillColor:[30,41,59],textColor:255,fontStyle:"bold"},alternateRowStyles:{fillColor:[248,250,252]},
     columnStyles:{0:{cellWidth:48},1:{halign:"right"},2:{halign:"right"},3:{halign:"right"},4:{halign:"right"},5:{halign:"right"},6:{halign:"right"},7:{halign:"right"}},
@@ -119,7 +119,7 @@ export function MonthlyReportModal({ open, onClose }: { open: boolean; onClose: 
           <div className="grid grid-cols-4 divide-x border-b shrink-0">
             {[
               {icon:Users,       label:"Ativos",   value:`${rows.length}`,             color:"text-foreground"},
-              {icon:Clock,       label:"Horas",    value:`${totals.horas.toFixed(1)}h`,color:"text-blue-600 dark:text-blue-400"},
+              {icon:Clock,       label:"Horas",    value:`${(Number(totals.horas)||0).toFixed(1)}h`,color:"text-blue-600 dark:text-blue-400"},
               {icon:Euro,        label:"Custo",    value:fmt(totals.custo),             color:"text-violet-600 dark:text-violet-400"},
               {icon:AlertCircle, label:"Pendente", value:fmt(totals.pendente),          color:totals.pendente>0?"text-amber-600 dark:text-amber-400":"text-emerald-600 dark:text-emerald-400"},
             ].map(({icon:Icon,label,value,color})=>(
@@ -157,10 +157,10 @@ export function MonthlyReportModal({ open, onClose }: { open: boolean; onClose: 
                       <p className="font-semibold text-sm">{r.name}</p>
                       <p className="text-[11px] text-muted-foreground truncate max-w-[160px]">{r.email}</p>
                     </td>
-                    <td className="py-3 px-3 text-right text-[11px] text-muted-foreground tabular-nums">{r.rate.toFixed(2)}€</td>
-                    <td className="py-3 px-3 text-right tabular-nums font-medium">{r.normalHoras.toFixed(1)}h</td>
-                    <td className="py-3 px-3 text-right tabular-nums">{r.extraHoras>0?<span className="text-amber-600 dark:text-amber-400 font-medium">{r.extraHoras.toFixed(1)}h</span>:<span className="text-muted-foreground/30">—</span>}</td>
-                    <td className="py-3 px-3 text-right tabular-nums font-bold">{r.totalHoras.toFixed(1)}h</td>
+                    <td className="py-3 px-3 text-right text-[11px] text-muted-foreground tabular-nums">{(Number(r.rate)||0).toFixed(2)}€</td>
+                    <td className="py-3 px-3 text-right tabular-nums font-medium">{(Number(r.normalHoras)||0).toFixed(1)}h</td>
+                    <td className="py-3 px-3 text-right tabular-nums">{r.extraHoras>0?<span className="text-amber-600 dark:text-amber-400 font-medium">{(Number(r.extraHoras)||0).toFixed(1)}h</span>:<span className="text-muted-foreground/30">—</span>}</td>
+                    <td className="py-3 px-3 text-right tabular-nums font-bold">{(Number(r.totalHoras)||0).toFixed(1)}h</td>
                     <td className="py-3 px-3 text-right tabular-nums font-semibold text-violet-600 dark:text-violet-400">{fmt(r.custo)}</td>
                     <td className="py-3 px-3 text-right tabular-nums">{r.pago>0?<span className="text-emerald-600 dark:text-emerald-400 font-semibold">{fmt(r.pago)}</span>:<span className="text-muted-foreground/30">—</span>}</td>
                     <td className="py-3 pl-3 pr-5 text-right tabular-nums">
@@ -174,9 +174,9 @@ export function MonthlyReportModal({ open, onClose }: { open: boolean; onClose: 
               <tfoot>
                 <tr className="border-t-2 border-border/40 bg-muted/30">
                   <td className="py-3 pl-5 pr-3 text-xs font-bold uppercase tracking-wide text-muted-foreground" colSpan={2}>Total</td>
-                  <td className="py-3 px-3 text-right tabular-nums font-bold">{rows.reduce((s,r)=>s+r.normalHoras,0).toFixed(1)}h</td>
-                  <td className="py-3 px-3 text-right tabular-nums font-bold text-amber-600 dark:text-amber-400">{rows.reduce((s,r)=>s+r.extraHoras,0).toFixed(1)}h</td>
-                  <td className="py-3 px-3 text-right tabular-nums font-bold">{totals.horas.toFixed(1)}h</td>
+                  <td className="py-3 px-3 text-right tabular-nums font-bold">{rows.reduce((s,r)=>s+(Number(r.normalHoras)||0),0).toFixed(1)}h</td>
+                  <td className="py-3 px-3 text-right tabular-nums font-bold text-amber-600 dark:text-amber-400">{rows.reduce((s,r)=>s+(Number(r.extraHoras)||0),0).toFixed(1)}h</td>
+                  <td className="py-3 px-3 text-right tabular-nums font-bold">{(Number(totals.horas)||0).toFixed(1)}h</td>
                   <td className="py-3 px-3 text-right tabular-nums font-bold text-violet-600 dark:text-violet-400">{fmt(totals.custo)}</td>
                   <td className="py-3 px-3 text-right tabular-nums font-bold text-emerald-600 dark:text-emerald-400">{fmt(totals.pago)}</td>
                   <td className="py-3 pl-3 pr-5 text-right tabular-nums font-bold text-amber-600 dark:text-amber-400">{fmt(totals.pendente)}</td>

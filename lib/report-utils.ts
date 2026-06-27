@@ -102,8 +102,10 @@ export function buildCollabMonthData(collab: any): MonthData[] {
     if (!monthMap.has(p)) monthMap.set(p, { periodo: p, hours: 0, cost: 0, paid: 0, pending: 0 })
     const m = monthMap.get(p)!
     const taxa = resolveEntryTaxaFull(e, rateHistory, currentRate)
-    m.hours += e.totalHoras || 0
-    m.cost  += taxa * (e.totalHoras || 0)
+    const eh = Number.isFinite(e.totalHoras) ? e.totalHoras : 0
+    const et = Number.isFinite(taxa) ? taxa : 0
+    m.hours += eh
+    m.cost  += et * eh
   })
 
   // Distribuir pagamentos cronologicamente pelos meses
@@ -119,7 +121,11 @@ export function buildCollabMonthData(collab: any): MonthData[] {
         m.paid += apply; left -= apply; rem -= apply
       } else break
     }
-    m.pending = Math.max(0, m.cost - m.paid)
+    const costSafe = Number.isFinite(m.cost) ? m.cost : 0
+    const paidSafe = Number.isFinite(m.paid) ? m.paid : 0
+    m.cost    = costSafe
+    m.paid    = paidSafe
+    m.pending = Math.max(0, costSafe - paidSafe)
   }
 
   return allMonths
@@ -147,26 +153,28 @@ export function buildMonthRows(collaborators: any[], monthKey: string): MonthRow
         custo += h * taxa
       })
 
-      // Pendente real: soma de todos os meses até ao atual
-      const allMonths = buildCollabMonthData(collab)
-      const thisMonth = allMonths.find(m => m.periodo === monthKey)
-      const pago     = thisMonth?.paid    ?? 0
-      const pendente = thisMonth?.pending ?? Math.max(0, custo - pago)
+      // Pagamentos deste mês
+      const monthPayments = (collab.payments || []).filter((p: any) => (p.date || "").startsWith(monthKey))
+      const pago = monthPayments.reduce((s: number, p: any) => s + (Number(p.valor) || 0), 0)
+      const pendente = Math.max(0, custo - pago)
 
       // Taxa representativa do mês (última taxa ativa nesse mês)
       const monthEnd = `${monthKey}-28`
-      const taxa     = resolveTaxaForDate(monthEnd, rateHistory, currentRate)
+      const taxa = resolveTaxaForDate(monthEnd, rateHistory, currentRate)
+
+      // Ensure every numeric field is a finite number (never NaN / undefined)
+      const safe = (v: number) => (Number.isFinite(v) ? Math.round(v * 100) / 100 : 0)
 
       return {
-        name: collab.name,
-        email: collab.email,
-        rate: taxa,
-        normalHoras: Math.round(normalHoras * 10) / 10,
-        extraHoras:  Math.round(extraHoras  * 10) / 10,
-        totalHoras:  Math.round(totalHoras  * 10) / 10,
-        custo:       Math.round(custo       * 100) / 100,
-        pago:        Math.round(pago        * 100) / 100,
-        pendente:    Math.round(pendente    * 100) / 100,
+        name:        collab.name  || "—",
+        email:       collab.email || "",
+        rate:        Number.isFinite(taxa) ? taxa : 0,
+        normalHoras: safe(normalHoras * 10) / 10,
+        extraHoras:  safe(extraHoras  * 10) / 10,
+        totalHoras:  safe(totalHoras  * 10) / 10,
+        custo:       safe(custo),
+        pago:        safe(pago),
+        pendente:    safe(pendente),
       }
     })
     .filter(r => r.totalHoras > 0 || r.pago > 0)

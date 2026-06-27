@@ -84,11 +84,11 @@ async function exportPDF(months: MonthSummary[], collabs: CollabAnnual[], year: 
     startY:30,
     head:[["Mês","Horas","Custo","Pago","Pendente","Ativos"]],
     body:[
-      ...activeMonths.map(m=>[m.label,`${m.horas.toFixed(1)}h`,`${m.custo.toFixed(2)}€`,`${m.pago.toFixed(2)}€`,`${m.pendente.toFixed(2)}€`,m.nAtivos]),
+      ...activeMonths.map(m=>[m.label,`${(Number(m.horas)||0).toFixed(1)}h`,`${(Number(m.custo)||0).toFixed(2)}€`,`${(Number(m.pago)||0).toFixed(2)}€`,`${(Number(m.pendente)||0).toFixed(2)}€`,m.nAtivos]),
       [{content:"TOTAL",styles:{fontStyle:"bold"}},"",
-        {content:`${months.reduce((s,m)=>s+m.custo,0).toFixed(2)}€`,styles:{fontStyle:"bold"}},
-        {content:`${months.reduce((s,m)=>s+m.pago,0).toFixed(2)}€`,styles:{fontStyle:"bold"}},
-        {content:`${months.reduce((s,m)=>s+m.pendente,0).toFixed(2)}€`,styles:{fontStyle:"bold"}},
+        {content:`${months.reduce((s,m)=>s+(Number(m.custo)||0),0).toFixed(2)}€`,styles:{fontStyle:"bold"}},
+        {content:`${months.reduce((s,m)=>s+(Number(m.pago)||0),0).toFixed(2)}€`,styles:{fontStyle:"bold"}},
+        {content:`${months.reduce((s,m)=>s+(Number(m.pendente)||0),0).toFixed(2)}€`,styles:{fontStyle:"bold"}},
         "",
       ],
     ],
@@ -105,7 +105,7 @@ async function exportPDF(months: MonthSummary[], collabs: CollabAnnual[], year: 
   autoTable(doc,{
     startY:y2+5,
     head:[["Colaborador","Total Horas","Custo Total","Pago","Pendente","Meses Ativos"]],
-    body:collabs.map(c=>[c.name,`${c.totalH.toFixed(1)}h`,`${c.totalCusto.toFixed(2)}€`,`${c.totalPago.toFixed(2)}€`,`${c.totalPend.toFixed(2)}€`,c.meses]),
+    body:collabs.map(c=>[c.name,`${(Number(c.totalH)||0).toFixed(1)}h`,`${(Number(c.totalCusto)||0).toFixed(2)}€`,`${(Number(c.totalPago)||0).toFixed(2)}€`,`${(Number(c.totalPend)||0).toFixed(2)}€`,c.meses]),
     styles:{fontSize:9,cellPadding:2.5},
     headStyles:{fillColor:[15,23,42],textColor:255,fontStyle:"bold"},
     alternateRowStyles:{fillColor:[248,250,252]},
@@ -183,7 +183,7 @@ export function AnnualReportModal({ open, onClose }: { open: boolean; onClose: (
           <div className="grid grid-cols-4 divide-x border-b shrink-0">
             {[
               {icon:Users,       label:"Colaboradores", value:`${collabs.length}`,          color:"text-foreground"},
-              {icon:Clock,       label:"Horas Anuais",  value:`${totals.horas.toFixed(1)}h`,color:"text-blue-600 dark:text-blue-400"},
+              {icon:Clock,       label:"Horas Anuais",  value:`${(Number(totals.horas)||0).toFixed(1)}h`,color:"text-blue-600 dark:text-blue-400"},
               {icon:Euro,        label:"Custo Total",   value:fmt(totals.custo),             color:"text-violet-600 dark:text-violet-400"},
               {icon:TrendingUp,  label:"Pendente",      value:fmt(totals.pendente),          color:totals.pendente>0?"text-amber-600 dark:text-amber-400":"text-emerald-600 dark:text-emerald-400"},
             ].map(({icon:Icon,label,value,color})=>(
@@ -232,7 +232,7 @@ export function AnnualReportModal({ open, onClose }: { open: boolean; onClose: (
                   <tr key={m.month} className={cn("border-b border-border/15 hover:bg-muted/20",
                     i%2===1&&"bg-muted/10", m.horas===0&&m.pago===0&&"opacity-30")}>
                     <td className="py-2.5 pl-5 pr-3 font-semibold capitalize">{m.label}</td>
-                    <td className="py-2.5 px-3 text-right tabular-nums">{m.horas>0?`${m.horas.toFixed(1)}h`:"—"}</td>
+                    <td className="py-2.5 px-3 text-right tabular-nums">{m.horas>0?`${(Number(m.horas)||0).toFixed(1)}h`:"—"}</td>
                     <td className="py-2.5 px-3 text-right tabular-nums text-violet-600 dark:text-violet-400">{m.custo>0?fmt(m.custo):"—"}</td>
                     <td className="py-2.5 px-3 text-right tabular-nums text-emerald-600 dark:text-emerald-400">{m.pago>0?fmt(m.pago):"—"}</td>
                     <td className="py-2.5 px-3 text-right tabular-nums">
@@ -247,7 +247,7 @@ export function AnnualReportModal({ open, onClose }: { open: boolean; onClose: (
               <tfoot>
                 <tr className="border-t-2 border-border/40 bg-muted/30">
                   <td className="py-3 pl-5 pr-3 text-xs font-bold uppercase text-muted-foreground">Total</td>
-                  <td className="py-3 px-3 text-right font-bold tabular-nums">{totals.horas.toFixed(1)}h</td>
+                  <td className="py-3 px-3 text-right font-bold tabular-nums">{(Number(totals.horas)||0).toFixed(1)}h</td>
                   <td className="py-3 px-3 text-right font-bold tabular-nums text-violet-600 dark:text-violet-400">{fmt(totals.custo)}</td>
                   <td className="py-3 px-3 text-right font-bold tabular-nums text-emerald-600 dark:text-emerald-400">{fmt(totals.pago)}</td>
                   <td className="py-3 px-3 text-right font-bold tabular-nums text-amber-600 dark:text-amber-400">{fmt(totals.pendente)}</td>
@@ -270,7 +270,7 @@ export function AnnualReportModal({ open, onClose }: { open: boolean; onClose: (
                   <tr key={c.name} className={cn("border-b border-border/15 hover:bg-muted/20",i%2===1&&"bg-muted/10")}>
                     <td className="py-2.5 pl-5 pr-2 text-muted-foreground/40 text-xs font-bold tabular-nums">{i+1}</td>
                     <td className="py-2.5 pr-3 font-semibold">{c.name}</td>
-                    <td className="py-2.5 px-3 text-right tabular-nums font-bold text-blue-600 dark:text-blue-400">{c.totalH.toFixed(1)}h</td>
+                    <td className="py-2.5 px-3 text-right tabular-nums font-bold text-blue-600 dark:text-blue-400">{(Number(c.totalH)||0).toFixed(1)}h</td>
                     <td className="py-2.5 px-3 text-right tabular-nums text-violet-600 dark:text-violet-400">{fmt(c.totalCusto)}</td>
                     <td className="py-2.5 px-3 text-right tabular-nums text-emerald-600 dark:text-emerald-400">{fmt(c.totalPago)}</td>
                     <td className="py-2.5 px-3 text-right tabular-nums">

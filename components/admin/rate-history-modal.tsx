@@ -52,9 +52,9 @@ async function exportPDF(rows: HistoryRow[], collaborators: any[]) {
     body: rows.map(r => [
       r.data ? new Date(r.data).toLocaleDateString("pt-PT") : "—",
       r.collaborator,
-      r.taxaAnterior != null ? `${r.taxaAnterior.toFixed(2)}€/h` : "—",
-      `${r.taxa.toFixed(2)}€/h`,
-      r.taxaAnterior != null ? (r.delta>=0?"+":"")+r.delta.toFixed(2)+"€" : "Inicial",
+      r.taxaAnterior != null ? `${(Number(r.taxaAnterior)||0).toFixed(2)}€/h` : "—",
+      `${(Number(r.taxa)||0).toFixed(2)}€/h`,
+      r.taxaAnterior != null ? (r.delta>=0?"+":"")+(Number(r.delta)||0).toFixed(2)+"€" : "Inicial",
       r.alteradoPor,
       r.motivo || "—",
     ]),
@@ -85,7 +85,7 @@ async function exportPDF(rows: HistoryRow[], collaborators: any[]) {
       startY: finalY + 5,
       head: [["Colaborador","Taxa Atual","Nº Alterações"]],
       body: collaborators.filter(c=>c.ativo!==false&&c.currentRate>0).sort((a,b)=>b.currentRate-a.currentRate).map(c=>[
-        c.name, `${c.currentRate.toFixed(2)}€/h`, (c.rateHistory||[]).length,
+        c.name, `${(Number(c.currentRate)||0).toFixed(2)}€/h`, (c.rateHistory||[]).length,
       ]),
       styles:{ fontSize:9, cellPadding:2.5 },
       headStyles:{ fillColor:[15,23,42], textColor:255, fontStyle:"bold" },
@@ -187,19 +187,19 @@ export function RateHistoryModal({ open, onClose }: { open: boolean; onClose: ()
                     </td>
                     <td className="py-2.5 px-3 font-semibold">{r.collaborator}</td>
                     <td className="py-2.5 px-3 text-right tabular-nums text-muted-foreground text-[11px]">
-                      {r.taxaAnterior != null ? `${r.taxaAnterior.toFixed(2)}€/h` : <span className="text-muted-foreground/30">—</span>}
+                      {r.taxaAnterior != null ? `${(Number(r.taxaAnterior)||0).toFixed(2)}€/h` : <span className="text-muted-foreground/30">—</span>}
                     </td>
-                    <td className="py-2.5 px-3 text-right tabular-nums font-bold">{r.taxa.toFixed(2)}€/h</td>
+                    <td className="py-2.5 px-3 text-right tabular-nums font-bold">{(Number(r.taxa)||0).toFixed(2)}€/h</td>
                     <td className="py-2.5 px-3 text-right tabular-nums">
                       {r.taxaAnterior == null ? (
                         <span className="text-[10px] text-muted-foreground/50">Inicial</span>
                       ) : r.delta > 0 ? (
                         <span className="flex items-center justify-end gap-0.5 text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]">
-                          <TrendingUp className="h-3 w-3"/>+{r.delta.toFixed(2)}€
+                          <TrendingUp className="h-3 w-3"/>+{(Number(r.delta)||0).toFixed(2)}€
                         </span>
                       ) : r.delta < 0 ? (
                         <span className="flex items-center justify-end gap-0.5 text-red-500 font-semibold text-[11px]">
-                          <TrendingDown className="h-3 w-3"/>{r.delta.toFixed(2)}€
+                          <TrendingDown className="h-3 w-3"/>{(Number(r.delta)||0).toFixed(2)}€
                         </span>
                       ) : (
                         <span className="flex items-center justify-end gap-0.5 text-muted-foreground/40 text-[11px]">
